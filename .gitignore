@@ -5,3 +5,9 @@ web_modules
 node_modules
 dist
 .env
+
+# Claude Code
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+.mcp.json
