@@ -3,6 +3,9 @@ Bryon Chase
 Timothy Antonio Whitehead
 Esteban Ruben Mangas Calva
 Jose Alberto Brito Santana ✓
+Joel Campos Porras
 
 
-Trello Site: <enter me>
+Trello Site: https://trello.com/b/eox30mw5
+
+Production website: https://wdd330-sleepoutside-team15.onrender.com
