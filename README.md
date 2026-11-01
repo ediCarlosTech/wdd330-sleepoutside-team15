@@ -35,6 +35,7 @@
 - **Multiple items in the cart:** The cart is now saved as an array in local storage (`so-cart`), so adding a new product no longer replaces what is already in the cart. Older carts saved as a single object are converted to an array automatically.
 - **Quantity instead of duplicates:** Adding a product that is already in the cart increases its quantity instead of adding a second copy of the item.
 - **Quantity limit:** Each product is limited to a maximum quantity of 99.
+- **Talus tent product ID:** The "Add to Cart" button on the North Face Talus 4-Person page used the 3-Person tent's ID (`989CG`), which has no image, so the cart showed a broken image. It now uses the correct ID (`985RF`).
 - **Cart display:** The cart page shows the actual quantity of each item, and the price shows the line total (price × quantity) formatted to two decimal places.
 
 #### Code Style
