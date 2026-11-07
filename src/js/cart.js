@@ -103,7 +103,7 @@ function updateCart(id, action) {
 }
 
 // one listener on the list handles every "X", "-", and "+" button
-// Rebuild cart HTML is after every change, so a listener added to each button 
+// Rebuild cart HTML is after every change, so a listener added to each button
 // would be thrown away on every refresh.
 document.querySelector(".product-list").addEventListener("click", (e) => {
   // find the button that was clicked, if any by action type
