@@ -31,6 +31,20 @@
 
 ### Updates
 
+#### Week 2: Dynamic Product Detail Page
+
+- **One product page for every product:** `product_pages/index.html` replaces the separate HTML file for each tent. It reads the product ID from the URL (for example `product_pages/?product=880RR`) and fills in the brand, name, image, price, color, and description from `json/tents.json`. A product ID that does not exist shows a "product could not be found" message.
+- **Home page links:** The product links on the home page now use the `?product=` URL parameter with each tent's ID (`880RR`, `985RF`, `985PR`, `344YJ`).
+- **`ProductDetails` class:** The new `js/ProductDetails.mjs` module holds the product page logic:
+  - `init()` loads the product with `ProductData`, renders it, and sets up the "Add to Cart" button.
+  - `renderProductDetails()` fills in the page HTML.
+  - `addProductToCart()` was moved to ProductDetails from `product.js` and keeps the prior cart quantity rules.
+- **`getParam(param)`:** A new helper in `js/utils.mjs` that returns a value from the URL query string.
+- **`utils.mjs` exports:** All of the module's exports are now listed in one `export { ... }` block at the bottom of the file. Add new helpers to that list so other modules can import them.
+- **`product.js`:** Now only sets up the page: it gets the product ID, creates `ProductData` and `ProductDetails`, and calls `init()`.
+- **Build:** `vite.config.js` includes `product_pages/index.html` so `npm run build` outputs the new page. 
+- The old tent pages are still in the build but are no longer linked from the home page. *** Needs Deleted Later ***
+
 #### Shopping Cart
 
 - **Multiple items in the cart:** The cart is now saved as an array in local storage (`so-cart`), so adding a new product no longer replaces what is already in the cart. Older carts saved as a single object are converted to an array automatically.
