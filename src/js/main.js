@@ -1,3 +1,6 @@
+import Alert from "./Alert.js";
+
+new Alert();
 import ProductData from "./ProductData.mjs";
 import ProductList from "./ProductList.mjs";
 
