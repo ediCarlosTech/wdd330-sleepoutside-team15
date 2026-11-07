@@ -22,8 +22,8 @@ function setClick(selector, callback) {
   qs(selector).addEventListener("click", callback);
 }
 
-// get a parameter value from the URL query string
-// example: for "product_pages/?product=880RR", getParam("product") returns "880RR"
+// get the parameter value from the URL query string
+// example: for "product_pages/?product=880RR", getParam("product") would return "880RR"
 function getParam(param) {
   // the part of the URL after the "?"
   const queryString = window.location.search;
@@ -33,5 +33,37 @@ function getParam(param) {
   return urlParams.get(param);
 }
 
+// render a list of items into an element using a template function
+// templateFn: a function that takes one item and returns its HTML string
+// parentElement: the element to put the HTML into
+// list: the array of items to render
+// position: where to insert the HTML 
+// clear: is true to empty the element, but is false by default
+function renderListWithTemplate(
+  templateFn,
+  parentElement,
+  list,
+  position = "afterbegin",
+  clear = false,
+) {
+  // call the template once for each item, giving an array of HTML strings
+  const htmlStrings = list.map(templateFn);
+
+  // remove anything already in the element if asked to
+  if (clear) {
+    parentElement.innerHTML = "";
+  }
+
+  // join the HTML strings into one and insert at the current position
+  parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
+}
+
 // add new utility functions to this list so other modules can import them
-export { qs, getLocalStorage, setLocalStorage, setClick, getParam };
+export {
+  qs,
+  getLocalStorage,
+  setLocalStorage,
+  setClick,
+  getParam,
+  renderListWithTemplate,
+};
