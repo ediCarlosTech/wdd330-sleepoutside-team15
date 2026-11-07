@@ -11,6 +11,9 @@ export default defineConfig({
         main: resolve(__dirname, "src/index.html"),
         cart: resolve(__dirname, "src/cart/index.html"),
         checkout: resolve(__dirname, "src/checkout/index.html"),
+        // the single product page, filled in from the "?product=" URL parameter
+        product: resolve(__dirname, "src/product_pages/index.html"),
+        // the old individual tent pages (no longer linked from the home page)
         product1: resolve(
           __dirname,
           "src/product_pages/cedar-ridge-rimrock-2.html",
