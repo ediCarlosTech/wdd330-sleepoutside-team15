@@ -44,5 +44,11 @@
       }
     ],
     "no-unused-expressions": "off"
+  },
+  "settings": {
+  "import/resolver": {
+    "typescript": true,
+    "node": true
   }
+}
 }

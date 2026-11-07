@@ -4,10 +4,9 @@ import getParam from "./utils.mjs";
 import ProductDetails from "./ProductDetails.mjs";
 
 const dataSource = new ProductData("tents");
-const productId = getParam('product');
+const productId = getParam("product");
 const product = new ProductDetails(productId, dataSource);
 product.init();
-
 
 //console.log(dataSource.findProductById(productId));
 
@@ -21,12 +20,12 @@ function addProductToCart(product) {
   }
 
   // If the product is in the chart change the quantity
-  const existing = cart.find((item) => item.Id === product.Id);
+  const existing = cart.find((item) => item.Id === cartProduct.Id);
   if (existing) {
     // cap the quantity at 99
     existing.qty = Math.min((existing.qty || 1) + 1, 99);
   } else {
-    cart.push({ ...product, qty: 1 });
+    cart.push({ ...cartProduct, qty: 1 });
   }
 
   setLocalStorage("so-cart", cart);
@@ -42,4 +41,3 @@ function addProductToCart(product) {
 // document
 //   .getElementById("addToCart")
 //   .addEventListener("click", addToCartHandler);
-
