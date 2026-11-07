@@ -10,7 +10,7 @@ product.init();
 
 //console.log(dataSource.findProductById(productId));
 
-function addProductToCart(product) {
+function addProductToCart(productToAdd) {
   // get the current cart
   let cart = getLocalStorage("so-cart") || [];
 
@@ -20,24 +20,24 @@ function addProductToCart(product) {
   }
 
   // If the product is in the chart change the quantity
-  const existing = cart.find((item) => item.Id === cartProduct.Id);
+  const existing = cart.find((item) => item.Id === productToAdd.Id);
   if (existing) {
     // cap the quantity at 99
     existing.qty = Math.min((existing.qty || 1) + 1, 99);
   } else {
-    cart.push({ ...cartProduct, qty: 1 });
+    cart.push({ ...productToAdd, qty: 1 });
   }
 
   setLocalStorage("so-cart", cart);
 }
 
-// // add to cart button event handler
-// async function addToCartHandler(e) {
-//   const product = await dataSource.findProductById(e.target.dataset.id);
-//   addProductToCart(product);
-// }
+// add to cart button event handler
+async function addToCartHandler(e) {
+  const productToAdd = await dataSource.findProductById(e.target.dataset.id);
+  addProductToCart(productToAdd);
+}
 
-// // add listener to Add to Cart button
-// document
-//   .getElementById("addToCart")
-//   .addEventListener("click", addToCartHandler);
+// add listener to Add to Cart button
+document
+  .getElementById("addToCart")
+  .addEventListener("click", addToCartHandler);
