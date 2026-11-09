@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, updateCartCount } from "./utils.mjs";
 
 // the most of one product allowed in the cart (same limit as the product page)
 const MAX_QTY = 99;
@@ -20,6 +20,9 @@ function renderCartContents() {
   const cartItems = getCart();
   const productList = document.querySelector(".product-list");
   const cartFooter = document.querySelector(".cart-footer");
+
+  // Update number of items in the cart to the backpack icon 
+  updateCartCount();
 
   // empty cart: show a message and keep the footer hidden
   if (cartItems.length === 0) {

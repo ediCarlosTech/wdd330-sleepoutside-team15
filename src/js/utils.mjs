@@ -58,6 +58,27 @@ function renderListWithTemplate(
   parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
 
+
+function getQtyItems() {
+  let cart = getLocalStorage("so-cart") || [];
+
+  const qty = cart.reduce(
+    (sum, item) => sum + item.qty,
+    0,
+  );
+
+  return qty;
+}
+
+function updateCartCount() {
+  const cartQty = qs(".cartItemsQty");
+  if (!cartQty) return;
+
+  const qty = getQtyItems();
+  cartQty.textContent = qty;
+  cartQty.classList.toggle("hide", qty === 0);
+}
+
 // add new utility functions to this list so other modules can import them
 export {
   qs,
@@ -65,5 +86,7 @@ export {
   setLocalStorage,
   setClick,
   getParam,
+  getQtyItems,
+  updateCartCount,
   renderListWithTemplate,
 };

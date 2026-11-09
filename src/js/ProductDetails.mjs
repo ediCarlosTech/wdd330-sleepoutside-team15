@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, updateCartCount } from "./utils.mjs";
 
 // common product detail page for one products
 export default class ProductDetails {
@@ -54,6 +54,9 @@ export default class ProductDetails {
 
     // set the cart to local storage
     setLocalStorage("so-cart", cart);
+   
+    // Update number of items in the cart to the backpack icon 
+    updateCartCount()
   }
 
   renderProductDetails() {
