@@ -18,4 +18,12 @@ const listElement = document.querySelector(".product-list");
 const productList = new ProductList("tents", dataSource, listElement);
 productList.init();
 
-//
+// detect changes in the product sorting menu
+const sortMenu = document.querySelector("#sort-products")
+
+sortMenu.addEventListener("change", (event) => {
+    console.log("Selected sorting option:", event.target.value);
+    const selectedOption = event.target.value;
+
+    productList.sortProducts(selectedOption);
+});

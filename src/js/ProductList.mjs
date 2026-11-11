@@ -30,8 +30,42 @@ export default class ProductList {
     // the dataSource returns a promise, use await to get the list of products
     // init is async so it can use await
     const list = await this.dataSource.getData();
-    this.renderList(list);
+    // preserve the original order
+    this.originalProducts = [...list];
+    // store products for sorting
+    this.products = [...list];
+    // display products in their original order
+    this.renderList(this.products);
   }
+
+  sortProducts(option) {
+  
+  if (option === "default") {
+  this.products = [...this.originalProducts];
+  }
+  
+  if (option === "price-asc") {
+    this.products.sort((a, b) => a.FinalPrice - b.FinalPrice);
+  }
+
+  if (option === "price-desc") {
+    this.products.sort((a, b) => b.FinalPrice - a.FinalPrice);
+  }
+
+  if (option === "name-asc") {
+    this.products.sort((a, b) =>
+      a.NameWithoutBrand.localeCompare(b.NameWithoutBrand)
+    );
+  }
+
+  if (option === "name-desc") {
+    this.products.sort((a, b) =>
+      b.NameWithoutBrand.localeCompare(a.NameWithoutBrand)
+    );
+   }
+
+  this.renderList(this.products);
+}
 
   // build a card for every product and put them all on the page
   renderList(list) {
