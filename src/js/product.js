@@ -11,7 +11,6 @@ const productId = getParam("product");
 const productDetails = new ProductDetails(productId, dataSource);
 productDetails.init();
 
-
 // // add to cart button event handler
 // async function addToCartHandler(e) {
 //   const product = await dataSource.findProductById(e.target.dataset.id);
