@@ -44,5 +44,17 @@
       }
     ],
     "no-unused-expressions": "off"
-  }
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": true,
+      "node": true
+    }
+  },
+  "overrides": [
+    {
+      "files": ["src/test/**/*.js", "**/*.test.js"],
+      "env": { "jest": true }
+    }
+  ]
 }

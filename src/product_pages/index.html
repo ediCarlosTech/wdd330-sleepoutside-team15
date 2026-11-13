@@ -6,7 +6,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Sleep Outside | North Face Talus 4-person tent</title>
+    <!-- the title is updated with the product name by ProductDetails.mjs -->
+    <title>Sleep Outside | Product Details</title>
 
     <link rel="stylesheet" href="../css/style.css" />
 
@@ -21,6 +22,7 @@
       </div>
 
       <div class="cart">
+        <span class="cartItemsQty hide"></span>
         <a href="../cart/">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
             <path
@@ -55,30 +57,30 @@
     </header>
 
     <main class="divider">
+      <!-- one page for every product: the details are filled in by
+           ProductDetails.mjs using the "?product=" ID in the URL -->
       <section class="product-detail">
-        <h3>The North Face</h3>
+        <!-- brand name, from "Brand.Name" -->
+        <h3 id="productBrand"></h3>
 
-        <h2 class="divider">Talus Tent - 4-Person, 3-Season</h2>
+        <!-- product name, from "NameWithoutBrand" -->
+        <h2 id="productName" class="divider"></h2>
 
-        <img
-          class="divider"
-          src="../images/tents/the-north-face-talus-tent-4-person-3-season-in-golden-oak-saffron-yellow~p~985rf_01~320.jpg"
-          alt="Talus Tent - 4-Person, 3-Season"
-        />
+        <!-- product image, from "Image" (no src until the product loads) -->
+        <img id="productImage" class="divider" alt="" />
 
-        <p class="product-card__price">$199.99</p>
+        <!-- price, from "FinalPrice" -->
+        <p id="productPrice" class="product-card__price"></p>
 
-        <p class="product__color">Golden Oak/Saffron Yellow</p>
+        <!-- color, from "Colors[0].ColorName" -->
+        <p id="productColor" class="product__color"></p>
 
-        <p class="product__description">
-          Enjoy a fun night under stars with your favorite people in The North
-          Face&#39;s Talus four-person tent, featuring durable construction with
-          a roomy interior, an advanced DAC Featherlite NSL pole system and an
-          easy to pitch design.
-        </p>
+        <!-- description, from "DescriptionHtmlSimple" -->
+        <p id="productDesc" class="product__description"></p>
 
         <div class="product-detail__add">
-          <button id="addToCart" data-id="985RF">Add to Cart</button>
+          <!-- "data-id" is set to the product ID when the product loads -->
+          <button id="addToCart">Add to Cart</button>
         </div>
       </section>
     </main>
