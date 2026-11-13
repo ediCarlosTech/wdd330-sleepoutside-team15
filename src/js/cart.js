@@ -1,4 +1,7 @@
-import { getLocalStorage, setLocalStorage, updateCartCount } from "./utils.mjs";
+import { loadheaderfooter, getLocalStorage, setLocalStorage, updateCartCount } from "./utils.mjs";
+
+// Header and footer loader
+loadheaderfooter()
 
 // the most of one product allowed in the cart (same limit as the product page)
 const MAX_QTY = 99;
