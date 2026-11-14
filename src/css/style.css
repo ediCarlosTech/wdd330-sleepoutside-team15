@@ -90,7 +90,7 @@ p {
   margin-top: -1.3em;
 }
 
-.logo--square > div {
+.logo--square>div {
   margin-top: -1.7em;
 }
 
@@ -117,6 +117,25 @@ button {
 /* hides an element, for example the cart footer when the cart is empty */
 .hide {
   display: none;
+}
+
+/* search bar */
+#filter-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 10px 0 10px 0;
+}
+
+#sort-prod {
+  flex: 2 1 200px;
+  align-self: stretch;
+}
+
+#search-prod {
+  align-self: stretch;
 }
 
 /* End utility classes */
