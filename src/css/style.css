@@ -219,6 +219,33 @@ p {
   padding: 0.5em;
   border: 1px solid var(--light-grey);
   max-width: 250px;
+  /* styling for discount */
+  position: relative;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: #b71c1c;
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  font-weight: bold;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.product-card__price {
+  color: green;
+  font-weight: bold;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #767676;
+  margin-right: 0.3rem;
+  font-size: 0.9em;
+  font-weight: 100;
 }
 
 .product-card h2,

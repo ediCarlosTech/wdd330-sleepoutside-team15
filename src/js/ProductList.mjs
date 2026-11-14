@@ -3,12 +3,30 @@ import { renderListWithTemplate } from "./utils.mjs";
 // returns the HTML for one product card
 // the markup matches the product cards on the home page ("index.html")
 function productCardTemplate(product) {
+  // verify if the product has a discount 
+  const isDiscounted = product.FinalPrice < product.SuggestedRetailPrice;
+  
+  // calculate amount saved
+  const amountSaved = isDiscounted ? (product.SuggestedRetailPrice - product.FinalPrice).toFixed(2) : 0;
+  
+  // create a saving badge element to insert later into template card 
+  const discountBadge = isDiscounted ? `<span class="discount-badge"> Save $${amountSaved}</span>` : "";
+  
+  const priceDisplay = isDiscounted ?
+    `<p class="product-card__price">
+     <span class="original-price">$${product.SuggestedRetailPrice.toFixed(2)}</span>
+     $${product.FinalPrice.toFixed(2)}
+     </p>
+     ` : `<p class="product-card__price">$${product.FinalPrice.toFixed(2)}</p>`;
+
+
   return `<li class="product-card">
     <a href="product_pages/?product=${product.Id}">
+      ${discountBadge}
       <img src="${product.Image}" alt="Image of ${product.NameWithoutBrand}" />
       <h3 class="card__brand">${product.Brand.Name}</h3>
       <h2 class="card__name">${product.NameWithoutBrand}</h2>
-      <p class="product-card__price">$${product.FinalPrice.toFixed(2)}</p>
+      ${priceDisplay}
     </a>
   </li>`;
 }
