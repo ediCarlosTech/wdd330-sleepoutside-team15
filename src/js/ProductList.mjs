@@ -15,7 +15,7 @@ function productCardTemplate(product) {
 
 // builds a list of product cards in HTML from an array of products
 export default class ProductList {
-  constructor(category, dataSource, listElement) {
+  constructor(category, dataSource, listElement, criteria = false) {
     // these are passed in to make the class as reusable as possible:
     // the same class can list any category, from any data source, into any element
     // the product category to list, for example "tents"
@@ -24,12 +24,21 @@ export default class ProductList {
     this.dataSource = dataSource;
     // the HTML element the product cards are rendered into
     this.listElement = listElement;
+    // determines if an array is passed
+    this.criteria = criteria 
   }
 
   async init() {
-    // the dataSource returns a promise, use await to get the list of products
-    // init is async so it can use await
-    const list = await this.dataSource.getData();
+    let list = []
+    // makes "list" to accept to types of values (arrays and promises)
+    if (this.criteria === true){
+      // assigns an array
+      list = this.dataSource
+    }else{
+      // if dataSource returns a promise, use await to get the list of products
+      // init is async so it can use await
+      list = await this.dataSource.getData();
+    }
     // preserve the original order
     this.originalProducts = [...list];
     // store products for sorting
