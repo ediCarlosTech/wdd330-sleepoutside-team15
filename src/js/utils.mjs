@@ -58,6 +58,36 @@ function renderListWithTemplate(
   parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
 
+// Render the header and footer tags with the text in the template.
+function renderWithTemplate(
+  template,
+  parentElement,
+  data,
+  callback) {
+  parentElement.innerHTML = template;
+
+  if (callback) {
+    callback(data);
+  }
+}
+
+// loads the template with the text of a give file.
+async function loadTemplate(path) {
+  const res = await fetch(path);
+  const template = await res.text();
+  return template;
+}
+
+// Loads the page with the standard footer and header
+async function loadheaderfooter() {
+  const headerTemplate = await loadTemplate("../partials/header.html");
+  const headerElement = document.querySelector("#main-header");
+  renderWithTemplate(headerTemplate, headerElement);
+
+  const footerTemplate = await loadTemplate("../partials/footer.html");
+  const footerElement = document.querySelector("#dfooter");
+  renderWithTemplate(footerTemplate, footerElement);
+}
 
 function getQtyItems() {
   let cart = getLocalStorage("so-cart") || [];
@@ -89,4 +119,6 @@ export {
   getQtyItems,
   updateCartCount,
   renderListWithTemplate,
+  renderWithTemplate,
+  loadheaderfooter
 };
