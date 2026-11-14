@@ -32,9 +32,12 @@ img {
 
 header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content:space-between;
+  align-items: center;
   padding: 0.5rem;
 }
+
 
 footer {
   text-align: center;
@@ -103,7 +106,7 @@ p {
   color: var(--tertiary-color);
 }
 
-button {
+#addToCart {
   padding: 0.5em 2em;
   background-color: var(--secondary-color);
   color: white;
@@ -121,25 +124,6 @@ button {
 /* hides an element, for example the cart footer when the cart is empty */
 .hide {
   display: none;
-}
-
-/* search bar */
-#filter-container {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin: 10px 0 10px 0;
-}
-
-#sort-prod {
-  flex: 2 1 200px;
-  align-self: stretch;
-}
-
-#search-prod {
-  align-self: stretch;
 }
 
 /* End utility classes */

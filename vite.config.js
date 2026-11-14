@@ -13,6 +13,7 @@ export default defineConfig({
         checkout: resolve(__dirname, "src/cart/checkout.html"),
         // the single product page, filled in from the "?product=" URL parameter
         product: resolve(__dirname, "src/product_pages/index.html"),
+        productSearch: resolve(__dirname, "src/productSearch.html"),
       },
     },
   },
