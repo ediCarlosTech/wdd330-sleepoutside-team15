@@ -1,29 +1,11 @@
 import Alert from "./Alert.js";
 import { loadheaderfooter } from "./utils.mjs";
 
+// show the alert messages from "json/alerts.json" at the top of the page
 new Alert();
-import ProductData from "./ProductData.mjs";
-import ProductList from "./ProductList.mjs";
 
 // Header and footer loader (it also updates the cart count on the backpack icon)
-loadheaderfooter()
+loadheaderfooter();
 
-// the data source that reads the product data from "json/tents.json"
-const dataSource = new ProductData("tents");
+// the product list and sort menu moved to "js/product-listing.js",
 
-// the list on the home page where the product cards will go
-const listElement = document.querySelector(".product-list");
-
-// create the tent product list and load the products
-const productList = new ProductList("tents", dataSource, listElement);
-productList.init();
-
-// detect changes in the product sorting menu
-const sortMenu = document.querySelector("#sort-products")
-
-sortMenu.addEventListener("change", (event) => {
-    console.log("Selected sorting option:", event.target.value);
-    const selectedOption = event.target.value;
-
-    productList.sortProducts(selectedOption);
-});
