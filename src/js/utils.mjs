@@ -113,6 +113,26 @@ function updateCartCount() {
   cartQty.classList.toggle("hide", qty === 0);
 }
 
+// restarts a CSS animation on an element, even if it is already playing
+function restartAnimation(el) {
+  if (!el) return;
+  el.classList.remove("cart-animate");
+  // forces a reflow so the browser plays the animation again
+  void el.offsetWidth;
+  el.classList.add("cart-animate");
+  el.addEventListener(
+    "animationend",
+    () => el.classList.remove("cart-animate"),
+    { once: true },
+  );
+}
+
+// animates the cart (backpack) icon and its quantity badge
+function animateCartIcon() {
+  restartAnimation(qs(".cart svg"));
+  restartAnimation(qs(".cartItemsQty"));
+}
+
 // add new utility functions to this list so other modules can import them
 export {
   qs,
@@ -122,6 +142,7 @@ export {
   getParam,
   getQtyItems,
   updateCartCount,
+  animateCartIcon,
   renderListWithTemplate,
   renderWithTemplate,
   loadheaderfooter
