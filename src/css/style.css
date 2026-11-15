@@ -200,6 +200,40 @@ p {
   padding: 1rem;
 }
 
+/* the four product categories under the hero image on the home page */
+.categories {
+  margin-top: 2rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.category-list {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  gap: 1rem;
+  list-style-type: none;
+  padding: 0;
+}
+
+.category-list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+  text-decoration: none;
+  color: var(--dark-grey);
+}
+
+.category-list img {
+  width: 80px;
+  height: 80px;
+}
+
+.category-list a:hover {
+  color: var(--primary-color);
+}
+
 .product-list {
   display: flex;
   flex-flow: row wrap;

@@ -80,11 +80,29 @@
 - **Cart count badge:** The backpack icon shows how many items are in the cart.
   - The count is updated right after the header loads, because the badge is part of the header and does not exist before that.
   - Items saved without a quantity count as 1.
-- **Product sorting:** The home page can sort the products by name or price.
+- **Product sorting:** The product listing page can sort the products by name or price.
 - **Product search:** A search box in the header shows matching products on `productSearch.html`.
 - **Discount indicator:** Product cards show a discount badge with the amount saved when a product's price is lower than its suggested retail price.
 - **Alerts:** `js/Alert.js` shows the messages from `json/alerts.json` at the top of the home page.
 - **Home page cleanup:** `index.html` no longer has a `<main>` inside another `<main>` or an empty alert section, and the footer is now outside `<main>` like on the other pages.
+
+#### Week 3: Expand Inventory
+
+- **Four categories:** The home page shows Tents, Backpacks, Sleeping Bags, and Hammocks under the hero image. Each one links to the product listing page with its category in the URL, for example `product_listing/index.html?category=sleeping-bags`. The icons are in `src/public/images/products/`.
+- **Product listing page:** The new `product_listing/index.html` page lists the products for the category in the URL, with the sort menu. Its heading shows the category, for example "Top Products: Backpacks". If the URL has no category, it shows tents.
+  - The product list and sort code moved from `main.js` to the new `js/product-listing.js`.
+  - `main.js` now only loads the alerts, header, and footer for the home page.
+  - `vite.config.js` includes the new page so `npm run build` outputs it.
+- **Products from the API:** The products now come from the API server instead of the local JSON files.
+  - `ProductData` no longer takes a category. `getData(category)` gets every product in a category, and `findProductById(id)` gets one product.
+  - The API sends its data inside `Result`.
+  - A product ID that does not exist still shows the "product could not be found" message.
+- **Environment variable:** The API address is set in `VITE_SERVER_URL`.
+  - Copy `src/.env.sample` to `src/.env` and set `VITE_SERVER_URL=https://wdd330-backend-osp8.onrender.com/`. The `.env` file is not committed to Git.
+  - On Render, the same variable is set in the site's environment settings.
+- **Images:** The API sends each image in several sizes in `Images`. Product cards use `PrimaryMedium`, the product page uses `PrimaryLarge`, and the cart uses `PrimaryMedium`.
+- **Old cart items removed:** Items saved in the cart before the switch to the API came from the old JSON files, so their prices or IDs can be out of date. They are removed from the cart when any page loads, and the customer adds them again at the current price. This check only runs once: `so-cart-checked` is then saved in local storage.
+- **Product links:** Product cards link to `/product_pages/?product=` with a leading `/`, so the links work from any page.
 
 #### Code Style
 

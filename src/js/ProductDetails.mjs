@@ -69,7 +69,8 @@ export default class ProductDetails {
     document.getElementById("productName").textContent = product.NameWithoutBrand;
 
     const productImage = document.getElementById("productImage");
-    productImage.src = product.Image;
+    // the API has several image sizes in "Images": the Primarylarge should be used here
+    productImage.src = product.Images.PrimaryLarge;
     productImage.alt = product.NameWithoutBrand;
 
     document.getElementById("productPrice").textContent =

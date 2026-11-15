@@ -12,7 +12,8 @@ const searchTerm = params.get("search-product");
 const keyword = document.querySelector("#keyword")
 
 
-const productlist = await new ProductData("tents").getData()
+// get the tents from the API; the category is passed to getData()
+const productlist = await new ProductData().getData("tents")
 // finds matches based on the criteria 
 const matches = productlist.filter(product =>
     product.Name.toLowerCase().includes(searchTerm.toLowerCase())

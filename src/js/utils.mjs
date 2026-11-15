@@ -78,8 +78,42 @@ async function loadTemplate(path) {
   return template;
 }
 
+// remove cart items saved before the products came from the API
+// those items came from the old local JSON files, so their prices or IDs can be
+// out of date; API products have "Images", the old ones do not
+// the customer adds them again and sees the current price
+// this only has to run once: after that, every item in the cart comes from the API
+// "so-cart-checked" is saved in local storage so it is not checked again
+function removeOldCartItems() {
+  // already checked on an earlier visit
+  if (getLocalStorage("so-cart-checked")) return;
+
+  let cart = getLocalStorage("so-cart");
+
+  // nothing saved yet means no old items to remove
+  if (cart) {
+    // older carts saved a single product instead of an array
+    if (!Array.isArray(cart)) {
+      cart = [cart];
+    }
+
+    const apiItems = cart.filter((item) => item.Images);
+
+    // only save when something was removed
+    if (apiItems.length !== cart.length) {
+      setLocalStorage("so-cart", apiItems);
+    }
+  }
+
+  // remember the check is done
+  setLocalStorage("so-cart-checked", true);
+}
+
 // Loads the page with the standard footer and header
 async function loadheaderfooter() {
+  // runs first, before the page or the cart badge reads the cart
+  removeOldCartItems();
+
   const headerTemplate = await loadTemplate("../partials/header.html");
   const headerElement = document.querySelector("#main-header");
   renderWithTemplate(headerTemplate, headerElement);

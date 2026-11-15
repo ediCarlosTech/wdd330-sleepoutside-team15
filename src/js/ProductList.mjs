@@ -20,10 +20,11 @@ function productCardTemplate(product) {
      ` : `<p class="product-card__price">$${product.FinalPrice.toFixed(2)}</p>`;
 
 
+  // the link starts with "/" so it works from any page that lists products.
   return `<li class="product-card">
-    <a href="product_pages/?product=${product.Id}">
+    <a href="/product_pages/?product=${product.Id}">
       ${discountBadge}
-      <img src="${product.Image}" alt="Image of ${product.NameWithoutBrand}" />
+      <img src="${product.Images.PrimaryMedium}" alt="Image of ${product.NameWithoutBrand}" />
       <h3 class="card__brand">${product.Brand.Name}</h3>
       <h2 class="card__name">${product.NameWithoutBrand}</h2>
       ${priceDisplay}
@@ -55,7 +56,8 @@ export default class ProductList {
     }else{
       // if dataSource returns a promise, use await to get the list of products
       // init is async so it can use await
-      list = await this.dataSource.getData();
+      // the category tells the API which products to send back
+      list = await this.dataSource.getData(this.category);
     }
     // preserve the original order
     this.originalProducts = [...list];

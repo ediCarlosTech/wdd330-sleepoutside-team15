@@ -30,23 +30,36 @@
       </div>
     </div>
 
-    <section class="products">
-      <h2>Top Products</h2>
-
-      <label for="sort-products">Sort by:</label>
-
-      <select id="sort-products">
-        <option value="default">Default</option>
-        <option value="name-asc">Name: A to Z</option>
-        <option value="name-desc">Name: Z to A</option>
-        <option value="price-asc">Price: Low to High</option>
-        <option value="price-desc">Price: High to Low</option>
-      </select>
-
-      <!-- the product cards are built by "js/ProductList.mjs" from
-           "json/tents.json"; each card links to the single product page
-           with the product ID in the "?product=" URL parameter -->
-      <ul class="product-list"></ul>
+    <!-- each category is a links to the product listing page with the
+         category in the "?category=" URL parameter -->
+    <section class="categories">
+      <h2>Shop by Category</h2>
+      <ul class="category-list">
+        <li>
+          <a href="product_listing/index.html?category=tents">
+            <img src="/images/products/category-tents.svg" alt="" />
+            <span>Tents</span>
+          </a>
+        </li>
+        <li>
+          <a href="product_listing/index.html?category=backpacks">
+            <img src="/images/products/category-backpacks.svg" alt="" />
+            <span>Backpacks</span>
+          </a>
+        </li>
+        <li>
+          <a href="product_listing/index.html?category=sleeping-bags">
+            <img src="/images/products/category-sleepingbags.svg" alt="" />
+            <span>Sleeping Bags</span>
+          </a>
+        </li>
+        <li>
+          <a href="product_listing/index.html?category=hammocks">
+            <img src="/images/products/category-hammocks.svg" alt="" />
+            <span>Hammocks</span>
+          </a>
+        </li>
+      </ul>
     </section>
   </main>
 
