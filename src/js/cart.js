@@ -51,10 +51,7 @@ function cartItemTemplate(item) {
   const newItem = `<li class="cart-card divider">
   <button class="cart-card__remove" data-id="${item.Id}" data-action="remove" aria-label="Remove ${item.Name}">X</button>
   <a href="#" class="cart-card__image">
-    <img
-      src="${item.Image}"
-      alt="${item.Name}"
-    />
+    <img src="${item.Images?.PrimarySmall}" alt="${item.Name}" />
   </a>
   <a href="#">
     <h2 class="card__name">${item.Name}</h2>

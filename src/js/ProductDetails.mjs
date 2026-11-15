@@ -54,7 +54,7 @@ export default class ProductDetails {
 
     // set the cart to local storage
     setLocalStorage("so-cart", cart);
-   
+
     // Update number of items in the cart to the backpack icon 
     updateCartCount()
   }
@@ -69,7 +69,7 @@ export default class ProductDetails {
     document.getElementById("productName").textContent = product.NameWithoutBrand;
 
     const productImage = document.getElementById("productImage");
-    productImage.src = product.Image;
+    productImage.src = product.Images.PrimaryLarge;
     productImage.alt = product.NameWithoutBrand;
 
     document.getElementById("productPrice").textContent =
@@ -78,7 +78,7 @@ export default class ProductDetails {
       product.Colors[0].ColorName;
 
     // innerHTML not textContent, the description contains HTML entities
-    
+
     document.getElementById("productDesc").innerHTML =
       product.DescriptionHtmlSimple;
 
