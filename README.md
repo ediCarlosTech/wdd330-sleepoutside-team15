@@ -27,7 +27,10 @@
 - Timothy Antonio Whitehead
 - Esteban Ruben Mangas Calva
 - Jose Alberto Brito Santana
-- Yoel Campos Porras
+- Joel Campos Porras
+- Edgar Garcia Morado
+- Axzam Bendeck
+- Fredrick Oketcho
 
 ### Updates
 
@@ -70,6 +73,18 @@
 - **Cart total:** The total cost of everything in the cart (price × quantity for each item) shows at the bottom of the cart. It is inside a `cart-footer` element that is hidden with the `hide` class when the cart is empty. The Checkout button will be added to this footer later.
 - **Empty cart:** The cart page no longer breaks when nothing has been added yet. It shows "Your cart is empty." instead.
 - Each "X", "-", and "+" button stores the product ID (`data-id`) and what it does (`data-action`). One click listener on the cart list handles all of them, because the cart HTML is rebuilt after every change.
+
+#### Week 3: Header, Footer, and Team Features
+
+- **Shared header and footer:** The header and footer HTML now live in `src/public/partials/header.html` and `footer.html`. `loadheaderfooter()` in `js/utils.mjs` loads them into the `#main-header` and `#dfooter` elements on every page.
+- **Cart count badge:** The backpack icon shows how many items are in the cart.
+  - The count is updated right after the header loads, because the badge is part of the header and does not exist before that.
+  - Items saved without a quantity count as 1.
+- **Product sorting:** The home page can sort the products by name or price.
+- **Product search:** A search box in the header shows matching products on `productSearch.html`.
+- **Discount indicator:** Product cards show a discount badge with the amount saved when a product's price is lower than its suggested retail price.
+- **Alerts:** `js/Alert.js` shows the messages from `json/alerts.json` at the top of the home page.
+- **Home page cleanup:** `index.html` no longer has a `<main>` inside another `<main>` or an empty alert section, and the footer is now outside `<main>` like on the other pages.
 
 #### Code Style
 

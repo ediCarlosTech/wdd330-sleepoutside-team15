@@ -93,7 +93,8 @@ function getQtyItems() {
   let cart = getLocalStorage("so-cart") || [];
 
   const qty = cart.reduce(
-    (sum, item) => sum + item.qty,
+    // count 1 for items saved without a "qty"
+    (sum, item) => sum + (item.qty || 1),
     0,
   );
 
