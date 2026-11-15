@@ -6,6 +6,7 @@ export default defineConfig({
 
   build: {
     outDir: "../dist",
+    target: "esnext",
     rollupOptions: {
       input: {
         main: resolve(__dirname, "src/index.html"),
@@ -14,6 +15,7 @@ export default defineConfig({
         // the single product page, filled in from the "?product=" URL parameter
         product: resolve(__dirname, "src/product_pages/index.html"),
         productSearch: resolve(__dirname, "src/productSearch.html"),
+        productListing: resolve(__dirname, "src/product_listing/index.html"),
       },
     },
   },
