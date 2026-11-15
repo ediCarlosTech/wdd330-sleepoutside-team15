@@ -1,14 +1,11 @@
 import Alert from "./Alert.js";
-import { loadheaderfooter, updateCartCount } from "./utils.mjs";
+import { loadheaderfooter } from "./utils.mjs";
 
 new Alert();
 import ProductData from "./ProductData.mjs";
 import ProductList from "./ProductList.mjs";
 
-// Update number of items in the cart to the backpack icon
-updateCartCount();
-
-// Header and footer loader
+// Header and footer loader (it also updates the cart count on the backpack icon)
 loadheaderfooter()
 
 // the data source that reads the product data from "json/tents.json"

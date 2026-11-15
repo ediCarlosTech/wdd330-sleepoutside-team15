@@ -83,6 +83,9 @@ async function loadheaderfooter() {
   const headerTemplate = await loadTemplate("../partials/header.html");
   const headerElement = document.querySelector("#main-header");
   renderWithTemplate(headerTemplate, headerElement);
+  // the cart badge (".cartItemsQty") is part of the header, so it only exists
+  // after the header is loaded: update the count now, on every page
+  updateCartCount();
 
   const footerTemplate = await loadTemplate("../partials/footer.html");
   const footerElement = document.querySelector("#dfooter");
@@ -93,7 +96,8 @@ function getQtyItems() {
   let cart = getLocalStorage("so-cart") || [];
 
   const qty = cart.reduce(
-    (sum, item) => sum + item.qty,
+    // count 1 for items saved without a "qty"
+    (sum, item) => sum + (item.qty || 1),
     0,
   );
 
