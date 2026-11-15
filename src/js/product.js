@@ -1,8 +1,8 @@
-import { loadheaderfooter, getParam, updateCartCount } from "./utils.mjs";
+import { loadheaderfooter, getParam } from "./utils.mjs";
 import ProductData from "./ProductData.mjs";
 import ProductDetails from "./ProductDetails.mjs";
 
-// Header and footer loader
+// Header and footer loader (updates the cart count on the backpack icon)
 loadheaderfooter()
 
 // get the product ID from the URL, for example "?product=880RR"
@@ -13,6 +13,3 @@ const dataSource = new ProductData("tents");
 // create the product details for this page and render them
 const product = new ProductDetails(productId, dataSource);
 product.init();
-
-// Update number of items in the cart to the backpack icon
-updateCartCount();
