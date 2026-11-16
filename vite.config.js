@@ -16,6 +16,8 @@ export default defineConfig({
         productSearch: resolve(__dirname, "src/productSearch.html"),
         // the product listing page, filled in from the "?category=" URL parameter
         productListing: resolve(__dirname, "src/product_listing/index.html"),
+        // wishlist page
+        wishlist: resolve(__dirname, "src/wishlist/index.html"),
       },
     },
   },
