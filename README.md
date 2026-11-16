@@ -104,6 +104,15 @@
 - **Old cart items removed:** Items saved in the cart before the switch to the API came from the old JSON files, so their prices or IDs can be out of date. They are removed from the cart when any page loads, and the customer adds them again at the current price. This check only runs once: `so-cart-checked` is then saved in local storage.
 - **Product links:** Product cards link to `/product_pages/?product=` with a leading `/`, so the links work from any page.
 
+#### Week 3: Shopping Cart Refactor
+
+- **`ShoppingCart` class:** The cart page code moved from `cart.js` to the new `js/ShoppingCart.mjs` module, the use as the product list uses `ProductList`.
+  - The constructor takes the local storage key (`"so-cart"`) and the list element the items are rendered into.
+  - `init()` sets up the click listener for the "X", "-", and "+" buttons and renders the cart.
+  - `cartItemTemplate(item)` is at the top of the module, and `renderCartContents()` uses the shared `renderListWithTemplate()` helper with it.
+  - The cart works the same as before: quantity limit of 99, "-" at quantity 1 removes the item, the total, and the empty cart message.
+- **`cart.js`:** Now only loads the header and footer, creates a `ShoppingCart`, and calls `init()`.
+
 #### Code Style
 
 - ESLint now enforces double quotes (`"quotes": ["error", "double"]`) to match the Prettier formatting used in the project.
