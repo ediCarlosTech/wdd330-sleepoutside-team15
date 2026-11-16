@@ -1,4 +1,5 @@
-import { getLocalStorage, setLocalStorage, updateCartCount, animateCartIcon } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { addToCart } from "./cartUtils.mjs";
 
 // common product detail page for one products
 export default class ProductDetails {
@@ -24,6 +25,7 @@ export default class ProductDetails {
     }
 
     this.renderProductDetails();
+    this.updateWishlistButton();
 
     // add a listener to the "Add to Cart" button, once the HTML is rendered
     // .bind(this) keeps "this" pointing at this ProductDetails instance;
@@ -31,36 +33,61 @@ export default class ProductDetails {
     document
       .getElementById("addToCart")
       .addEventListener("click", this.addProductToCart.bind(this));
+
+    // Add the selected product to the wishlist
+    document
+      .getElementById("addToWishlist")
+      .addEventListener("click", this.addProductToWishlist.bind(this));
   }
 
   addProductToCart() {
-    // load the the current cart
-    let cart = getLocalStorage("so-cart") || [];
-
-    // set it to an array if it is not
-    if (!Array.isArray(cart)) {
-      cart = [cart];
-    }
-
-    // if the product is already in the cart, change the quantity
-    const existing = cart.find((item) => item.Id === this.product.Id);
-
-    if (existing) {
-      // cap the quantity at 99
-      existing.qty = Math.min((existing.qty || 1) + 1, 99);
-    } else {
-      cart.push({ ...this.product, qty: 1 });
-    }
-
-    // set the cart to local storage
-    setLocalStorage("so-cart", cart);
-
-    // Update number of items in the cart to the backpack icon 
-    updateCartCount()
-
-    // animate the backpack icon so the user notices the cart changed
-    animateCartIcon();
+    addToCart(this.product);
   }
+
+  addProductToWishlist() {
+  // Get the current wishlist from localStorage
+  let wishlist = getLocalStorage("so-wishlist") || [];
+
+  // Ensure the wishlist is an array
+  if (!Array.isArray(wishlist)) {
+    wishlist = [];
+  }
+
+  // Check if the product is already in the wishlist
+  const existingProduct = wishlist.find(
+    (item) => item.Id === this.product.Id
+  );
+
+  // Add the product only if it does not already exist
+  if (!existingProduct) {
+    wishlist.push(this.product);
+    setLocalStorage("so-wishlist", wishlist);
+  }
+
+  this.updateWishlistButton();
+}
+
+updateWishlistButton() {
+  // Get the wishlist from localStorage
+  const wishlist = getLocalStorage("so-wishlist");
+
+  // Check whether the current product is in the wishlist
+  const isInWishlist =
+    Array.isArray(wishlist) &&
+    wishlist.some((item) => item.Id === this.product.Id);
+
+  // Find the wishlist button
+  const button = document.getElementById("addToWishlist");
+
+  // Update the button according to the product's status
+  if (isInWishlist) {
+    button.textContent = "♥ Added to Wishlist";
+    button.disabled = true;
+  } else {
+    button.textContent = "♡ Add to Wishlist";
+    button.disabled = false;
+  }
+}
 
   renderProductDetails() {
     const product = this.product;
