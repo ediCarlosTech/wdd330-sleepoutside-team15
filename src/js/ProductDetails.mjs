@@ -14,7 +14,7 @@ export default class ProductDetails {
   async init() {
     // findProductById returns a promise, wait for product details
     // details are needed before the HTML can be rendered
-    this.product = await this.dataSource.findProductById(this.productId);
+    this.product = await this.dataSource.findProductById(`${baseURL}product/${id}`);
 
     // stop here, if the ID in the URL does not match a product
     if (!this.product) {
@@ -66,7 +66,7 @@ export default class ProductDetails {
     document.getElementById("productName").textContent = product.NameWithoutBrand;
 
     const productImage = document.getElementById("productImage");
-    productImage.src = product.Image;
+    productImage.src = product.Image.ProductLarge;
     productImage.alt = product.NameWithoutBrand;
 
     document.getElementById("productPrice").textContent =
