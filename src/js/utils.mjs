@@ -22,6 +22,21 @@ function setClick(selector, callback) {
   qs(selector).addEventListener("click", callback);
 }
 
+function renderListWithTemplate(
+  templateFn,
+  parentElement,
+  list,
+  position = "afterbegin",
+  clear = false,
+) {
+  if (clear) {
+    parentElement.innerHTML = "";
+  }
+
+  const htmlStrings = list.map(templateFn);
+  parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
+}
+
 // get a parameter value from the URL query string
 // example: for "product_pages/?product=880RR", getParam("product") returns "880RR"
 function getParam(param) {
@@ -34,4 +49,11 @@ function getParam(param) {
 }
 
 // add new utility functions to this list so other modules can import them
-export { qs, getLocalStorage, setLocalStorage, setClick, getParam };
+export {
+  qs,
+  getLocalStorage,
+  setLocalStorage,
+  setClick,
+  renderListWithTemplate,
+  getParam,
+};
