@@ -1,7 +1,7 @@
 import {
   getLocalStorage,
   setLocalStorage,
-  loadheaderfooter
+  loadheaderfooter,
 } from "./utils.mjs";
 
 import { addToCart } from "./cartUtils.mjs";
@@ -28,7 +28,6 @@ function showEmptyWishlist() {
 // Display the products
 if (Array.isArray(wishlist) && wishlist.length > 0) {
   wishlist.forEach((product) => {
-
     // Create the product card
     const item = document.createElement("li");
     item.classList.add("product-card");
@@ -55,7 +54,6 @@ if (Array.isArray(wishlist) && wishlist.length > 0) {
 
     // Move the selected product from wishlist to cart
     moveToCartButton.addEventListener("click", () => {
-
       // Add the product to the shopping cart
       addToCart(product);
 
@@ -64,7 +62,7 @@ if (Array.isArray(wishlist) && wishlist.length > 0) {
 
       // Remove the product from the wishlist
       const updatedWishlist = currentWishlist.filter(
-        (wishlistItem) => wishlistItem.Id !== product.Id
+        (wishlistItem) => wishlistItem.Id !== product.Id,
       );
 
       // Save the updated wishlist
@@ -84,13 +82,12 @@ if (Array.isArray(wishlist) && wishlist.length > 0) {
 
     // Remove the selected product from the wishlist
     removeButton.addEventListener("click", () => {
-
       // Get the current wishlist
       const currentWishlist = getLocalStorage("so-wishlist") || [];
 
       // Remove the selected product
       const updatedWishlist = currentWishlist.filter(
-        (wishlistItem) => wishlistItem.Id !== product.Id
+        (wishlistItem) => wishlistItem.Id !== product.Id,
       );
 
       // Save the updated wishlist
@@ -120,9 +117,7 @@ if (Array.isArray(wishlist) && wishlist.length > 0) {
     // Add the card to the wishlist
     wishlistElement.appendChild(item);
   });
-
 } else {
-
   // Display a message when the wishlist is empty
   showEmptyWishlist();
 }

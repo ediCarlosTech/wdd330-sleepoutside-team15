@@ -1,51 +1,49 @@
 <!doctype html>
 
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- the title is updated with the product name by ProductDetails.mjs -->
+    <title>Sleep Outside | Product Details</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="../js/product.js" type="module"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- the title is updated with the product name by ProductDetails.mjs -->
-  <title>Sleep Outside | Product Details</title>
-  <link rel="stylesheet" href="../css/style.css" />
-  <script src="../js/product.js" type="module"></script>
-</head>
-
-<body>
-  <header class="divider" id="main-header"></header>
-  <main class="divider">
-    <!-- one page for every product: the details are filled in by
+  <body>
+    <header class="divider" id="main-header"></header>
+    <main class="divider">
+      <!-- one page for every product: the details are filled in by
            ProductDetails.mjs using the "?product=" ID in the URL -->
-    <section class="product-detail">
-      <!-- brand name, from "Brand.Name" -->
-      <h3 id="productBrand"></h3>
+      <section class="product-detail">
+        <!-- brand name, from "Brand.Name" -->
+        <h3 id="productBrand"></h3>
 
-      <!-- product name, from "NameWithoutBrand" -->
-      <h2 id="productName" class="divider"></h2>
+        <!-- product name, from "NameWithoutBrand" -->
+        <h2 id="productName" class="divider"></h2>
 
-      <!-- product image, from "Images.PrimaryLarge" product must load -->
-      <img id="productImage" class="divider" alt="" />
+        <!-- product image, from "Images.PrimaryLarge" product must load -->
+        <img id="productImage" class="divider" alt="" />
 
-      <!-- price, from "FinalPrice" -->
-      <p id="productPrice" class="product-card__price"></p>
+        <!-- price, from "FinalPrice" -->
+        <p id="productPrice" class="product-card__price"></p>
 
-      <!-- color, from "Colors[0].ColorName" -->
-      <p id="productColor" class="product__color"></p>
+        <!-- color, from "Colors[0].ColorName" -->
+        <p id="productColor" class="product__color"></p>
 
-      <!-- description, from "DescriptionHtmlSimple" -->
-      <p id="productDesc" class="product__description"></p>
+        <!-- description, from "DescriptionHtmlSimple" -->
+        <p id="productDesc" class="product__description"></p>
 
-      <div class="product-detail__add">
-        <!-- "data-id" is set to the product ID when the product loads -->
-        <button id="addToCart">Add to Cart</button>
+        <div class="product-detail__add">
+          <!-- "data-id" is set to the product ID when the product loads -->
+          <button id="addToCart">Add to Cart</button>
 
-        <!-- Add or remove the product from the wishlist -->
-        <button id="addToWishlist" type="button">♡ Add to Wishlist</button>
-      </div>
-    </section>
-  </main>
+          <!-- Add or remove the product from the wishlist -->
+          <button id="addToWishlist" type="button">♡ Add to Wishlist</button>
+        </div>
+      </section>
+    </main>
 
-  <footer id="dfooter"></footer>
-</body>
-
+    <footer id="dfooter"></footer>
+  </body>
 </html>

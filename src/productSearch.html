@@ -1,27 +1,24 @@
 <!doctype html>
 
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- the title is updated with the product name by ProductDetails.mjs -->
+    <title>Sleep Outside | Product Details</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="./js/productSearch.js" type="module"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- the title is updated with the product name by ProductDetails.mjs -->
-  <title>Sleep Outside | Product Details</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <script src="./js/productSearch.js" type="module"></script>
-</head>
+  <body>
+    <header class="divider" id="main-header"></header>
 
-<body>
-  <header class="divider" id="main-header"></header>
+    <main class="divider">
+      <h2>Search results for: <span id="keyword"></span></h2>
 
-  <main class="divider">
-    <H2>Search results for: <span id="keyword"></span></H2>
+      <ul class="product-list"></ul>
+    </main>
 
-    <ul class="product-list"></ul>
-
-  </main>
-
-  <footer id="dfooter"></footer>
-</body>
-
+    <footer id="dfooter"></footer>
+  </body>
 </html>

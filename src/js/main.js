@@ -17,4 +17,3 @@ newsletterForm?.addEventListener("submit", (event) => {
 });
 
 // the product list and sort menu moved to "js/product-listing.js",
-
