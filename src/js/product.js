@@ -3,7 +3,7 @@ import ProductData from "./ProductData.mjs";
 import ProductDetails from "./ProductDetails.mjs";
 
 // Header and footer loader (updates the cart count on the backpack icon)
-loadheaderfooter()
+loadheaderfooter();
 
 // get the product ID from the URL
 const productId = getParam("product");

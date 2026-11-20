@@ -35,9 +35,7 @@ const quickViewBrand = document.querySelector("#quick-view-brand");
 const quickViewName = document.querySelector("#quick-view-name");
 const quickViewPrice = document.querySelector("#quick-view-price");
 const quickViewColor = document.querySelector("#quick-view-color");
-const quickViewDescription = document.querySelector(
-  "#quick-view-description"
-);
+const quickViewDescription = document.querySelector("#quick-view-description");
 
 // create the product list for the category and load the products
 const productList = new ProductList(category, dataSource, listElement);
@@ -48,6 +46,7 @@ async function openQuickView(productId) {
   const product = await dataSource.findProductById(productId);
 
   if (!product) {
+    // eslint-disable-next-line no-console
     console.error(`Product not found: ${productId}`);
     return;
   }
