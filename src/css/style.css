@@ -286,6 +286,66 @@ p {
   color: var(--primary-color);
 }
 
+.newsletter {
+  margin: 2rem 1rem;
+  padding: 1.5rem;
+  background-color: #f5f2eb;
+  text-align: center;
+}
+
+.newsletter h2 {
+  color: var(--secondary-color);
+}
+
+.newsletter > p {
+  margin: 0 auto;
+}
+
+.newsletter form {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.newsletter label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: var(--small-font);
+  font-weight: bold;
+}
+
+.newsletter-form__controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-form__controls input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem;
+  border: 1px solid var(--light-grey);
+  font: inherit;
+}
+
+.newsletter-form__controls button {
+  padding: 0.65rem 1rem;
+  border: 0;
+  background-color: var(--secondary-color);
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.newsletter-form__controls button:hover {
+  background-color: var(--tertiary-color);
+}
+
+.newsletter-message {
+  margin: 0;
+  padding: 0.5rem 0 0;
+  font-size: var(--small-font);
+}
+
 .product-list {
   display: flex;
   flex-flow: row wrap;
@@ -535,4 +595,58 @@ header#main-header .cart {
   grid-column: 3;
   grid-row: 1;
   justify-self: end;
+}
+
+/* Quick view modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.65);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  position: relative;
+  width: min(100%, 500px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.modal-content img {
+  display: block;
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.close-modal {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--dark-grey);
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: var(--tertiary-color);
+}
+
+#quick-view-price {
+  color: green;
+  font-weight: bold;
 }
