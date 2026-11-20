@@ -61,6 +61,26 @@
         </li>
       </ul>
     </section>
+
+    <section class="newsletter" aria-labelledby="newsletter-title">
+      <h2 id="newsletter-title">Get Outside with Us</h2>
+      <p>Sign up for our newsletter to hear about new gear and outdoor inspiration.</p>
+      <form id="newsletter-form">
+        <label for="newsletter-email">Email address</label>
+        <div class="newsletter-form__controls">
+          <input
+            id="newsletter-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            required
+          />
+          <button type="submit">Sign Up</button>
+        </div>
+        <p id="newsletter-message" class="newsletter-message" aria-live="polite"></p>
+      </form>
+    </section>
   </main>
 
   <footer id="dfooter"></footer>

@@ -286,6 +286,66 @@ p {
   color: var(--primary-color);
 }
 
+.newsletter {
+  margin: 2rem 1rem;
+  padding: 1.5rem;
+  background-color: #f5f2eb;
+  text-align: center;
+}
+
+.newsletter h2 {
+  color: var(--secondary-color);
+}
+
+.newsletter > p {
+  margin: 0 auto;
+}
+
+.newsletter form {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.newsletter label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: var(--small-font);
+  font-weight: bold;
+}
+
+.newsletter-form__controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-form__controls input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem;
+  border: 1px solid var(--light-grey);
+  font: inherit;
+}
+
+.newsletter-form__controls button {
+  padding: 0.65rem 1rem;
+  border: 0;
+  background-color: var(--secondary-color);
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.newsletter-form__controls button:hover {
+  background-color: var(--tertiary-color);
+}
+
+.newsletter-message {
+  margin: 0;
+  padding: 0.5rem 0 0;
+  font-size: var(--small-font);
+}
+
 .product-list {
   display: flex;
   flex-flow: row wrap;
