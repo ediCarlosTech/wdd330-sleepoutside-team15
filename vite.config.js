@@ -18,6 +18,8 @@ export default defineConfig({
         productListing: resolve(__dirname, "src/product_listing/index.html"),
         // wishlist page
         wishlist: resolve(__dirname, "src/wishlist/index.html"),
+        // chechout page
+        checkout: resolve(__dirname, "src/checkout/index.html"),
       },
     },
   },
