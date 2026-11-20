@@ -39,12 +39,12 @@
 - **One product page for every product:** `product_pages/index.html` replaces the separate HTML file for each tent. It reads the product ID from the URL (for example `product_pages/?product=880RR`) and fills in the brand, name, image, price, color, and description from `json/tents.json`. A product ID that does not exist shows a "product could not be found" message.
 - **Home page links:** The product links on the home page now use the `?product=` URL parameter with each tent's ID (`880RR`, `985RF`, `985PR`, `344YJ`).
 - **`ProductDetails` class:** The new `js/ProductDetails.mjs` module holds the product page logic:
-  - `init()` loads the product with `ProductData`, renders it, and sets up the "Add to Cart" button.
+  - `init()` loads the product with `ExternalServices`, renders it, and sets up the "Add to Cart" button.
   - `renderProductDetails()` fills in the page HTML.
   - `addProductToCart()` was moved to ProductDetails from `product.js` and keeps the prior cart quantity rules.
 - **`getParam(param)`:** A new helper in `js/utils.mjs` that returns a value from the URL query string.
 - **`utils.mjs` exports:** All of the module's exports are now listed in one `export { ... }` block at the bottom of the file. Add new helpers to that list so other modules can import them.
-- **`product.js`:** Now only sets up the page: it gets the product ID, creates `ProductData` and `ProductDetails`, and calls `init()`.
+- **`product.js`:** Now only sets up the page: it gets the product ID, creates `ExternalServices` and `ProductDetails`, and calls `init()`.
 - **Build:** `vite.config.js` includes `product_pages/index.html` so `npm run build` outputs the new page. 
 - The four old tent pages (`cedar-ridge-rimrock-2.html`, `marmot-ajax-3.html`, `northface-alpine-3.html`, `northface-talus-4.html`) have been deleted. `product_pages/index.html` is the only product page.
 
@@ -56,7 +56,7 @@
   - Image paths now start with `/images/` so they work from any page.
   - The checkout page now loads `/css/style.css`.
 - **Home page list:** The home page product cards are now built from `json/tents.json` instead of being typed into `index.html`.
-- **`main.js`:** Creates `ProductData` and `ProductList` for tents and calls `init()`. The home page loads it with a `<script type="module">` tag.
+- **`main.js`:** Creates `ExternalServices` and `ProductList` for tents and calls `init()`. The home page loads it with a `<script type="module">` tag.
 - **`ProductList` class:** The new `js/ProductList.mjs` module gets the products and renders a card for each one using the `productCardTemplate(product)` function.
 - **`renderListWithTemplate()`:** A new helper in `js/utils.mjs` that renders any list with any template function. It can insert at a chosen position (`"afterbegin"` by default) and clear the element first (`false` by default).
 - **Missing tent images added:** The North Face Talus 3-Person (`989CG`) and Marmot Ajax 2-Person (`880RT`) now have 320 × 320 `.webp` images, and their `Image` paths in `tents.json` point to them.
@@ -94,7 +94,7 @@
   - `main.js` now only loads the alerts, header, and footer for the home page.
   - `vite.config.js` includes the new page so `npm run build` outputs it.
 - **Products from the API:** The products now come from the API server instead of the local JSON files.
-  - `ProductData` no longer takes a category. `getData(category)` gets every product in a category, and `findProductById(id)` gets one product.
+  - `ExternalServices` no longer takes a category. `getData(category)` gets every product in a category, and `findProductById(id)` gets one product.
   - The API sends its data inside `Result`.
   - A product ID that does not exist still shows the "product could not be found" message.
 - **Environment variable:** The API address is set in `VITE_SERVER_URL`.

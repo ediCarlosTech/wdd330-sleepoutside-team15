@@ -1,5 +1,5 @@
 import { loadheaderfooter, getParam } from "./utils.mjs";
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import ProductList from "./ProductList.mjs";
 
 // Header and footer loader (updates the cart count on the backpack icon)
@@ -21,7 +21,7 @@ document.querySelector(".products h2").textContent =
 document.title = `Sleep Outside | ${categoryName}`;
 
 // the data source that gets the products from the API
-const dataSource = new ProductData();
+const dataSource = new ExternalServices();
 
 // the list on the page where the product cards will go
 const listElement = document.querySelector(".product-list");

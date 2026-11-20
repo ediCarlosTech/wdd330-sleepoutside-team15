@@ -1,22 +1,40 @@
-import { loadheaderfooter,  } from "./utils.mjs";
+import { loadheaderfooter } from "./utils.mjs";
 import CheckoutProcess from "./CheckoutProcess.mjs";
 
-// Load the standard header and footer
+// Load header and footer
 loadheaderfooter();
 
-
-// Create checkout instance
+// Initialize checkout
 const checkout = new CheckoutProcess(
-    "so-cart",
-    "#order-summary"
+  "so-cart",
+  "#order-summary"
 );
 
-// Initialize checkout process
 checkout.init();
 
-// Calculate totals after ZIP code changes
-const zipInput = document.querySelector("#zip")
+// Calculate totals when ZIP code changes
+const zipInput = document.querySelector("#zip");
 
 zipInput.addEventListener("change", () => {
-    checkout.calculateOrderTotal();
+  checkout.calculateOrderTotal();
+});
+
+// Get checkout form
+const checkoutForm = document.querySelector("#checkoutForm");
+
+// Handle form submission
+checkoutForm.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  if (!checkoutForm.reportValidity()) {
+    return;
+  }
+
+  try {
+    await checkout.checkout(checkoutForm);
+  } catch (error) {
+    console.error("Checkout request failed:", error);
+  }
+
 });

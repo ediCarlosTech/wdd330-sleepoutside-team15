@@ -7,7 +7,7 @@ export const SEARCH_CATEGORIES = [
 ];
 
 // search every category for products whose name contains the term
-// dataSource is a ProductData instance (anything with getData(category))
+// dataSource is a ExternalServices instance (anything with getData(category))
 // returns { matches, failedCount } so the page can warn about partial results
 export async function searchProducts(term, dataSource) {
   const cleanTerm = (term || "").trim().toLowerCase();
