@@ -32,6 +32,23 @@
            to the single product page with the product ID in the "?product=" URL parameter -->
       <ul class="product-list"></ul>
     </section>
+
+    <div id="quick-view-modal" class="modal hidden">
+      <div class="modal-content">
+        <button id="close-modal" class="close-modal" type="button">
+          &times;
+        </button>
+
+        <img id="quick-view-image" src="" alt="" />
+
+        <h3 id="quick-view-brand"></h3>
+        <h2 id="quick-view-name"></h2>
+        <p id="quick-view-price"></p>
+        <p id="quick-view-color"></p>
+        <div id="quick-view-description"></div>
+      </div>
+    </div>
+
   </main>
 
   <footer id="dfooter"></footer>
