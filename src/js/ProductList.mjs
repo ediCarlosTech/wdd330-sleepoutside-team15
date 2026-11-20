@@ -43,7 +43,7 @@ export default class ProductList {
     // the same class can list any category, from any data source, into any element
     // the product category to list, for example "tents"
     this.category = category;
-    // a ProductData instance used to get the products
+    // a ExternalServices instance used to get the products
     this.dataSource = dataSource;
     // the HTML element the product cards are rendered into
     this.listElement = listElement;

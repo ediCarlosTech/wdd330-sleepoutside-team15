@@ -8,7 +8,7 @@ export default class ProductDetails {
     this.productId = productId;
     // filled in with the product details by init()
     this.product = {};
-    // a ProductData instance used to look up the product
+    // a ExternalServices instance used to look up the product
     this.dataSource = dataSource;
   }
 

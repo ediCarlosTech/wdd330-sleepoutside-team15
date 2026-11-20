@@ -1,5 +1,5 @@
 import { loadheaderfooter, getParam } from "./utils.mjs";
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import ProductList from "./ProductList.mjs";
 import { searchProducts } from "./searchProducts.mjs";
 
@@ -21,7 +21,7 @@ async function showResults() {
   try {
     const { matches, failedCount } = await searchProducts(
       searchTerm,
-      new ProductData(),
+      new ExternalServices(),
     );
 
     if (matches.length === 0) {

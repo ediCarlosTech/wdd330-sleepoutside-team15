@@ -9,7 +9,7 @@ function convertToJson(res) {
   }
 }
 
-export default class ProductData {
+export default class ExternalServices {
   // category is passed in to getData()
   // so the same data source can be used for any category
   constructor() {}
@@ -34,4 +34,22 @@ export default class ProductData {
     // the API puts the product in "Result"
     return data.Result;
   }
+
+  async checkout(order) {
+
+    const url = "https://wdd330-backend-osp8.onrender.com/checkout";
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(order)
+    };
+
+    const response = await fetch(url, options);
+
+    return await response.json();
+  }
+
 }
