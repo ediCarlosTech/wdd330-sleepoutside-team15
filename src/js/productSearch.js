@@ -1,34 +1,47 @@
-import { loadheaderfooter } from "./utils.mjs";
+import { loadheaderfooter, getParam } from "./utils.mjs";
 import ProductData from "./ProductData.mjs";
 import ProductList from "./ProductList.mjs";
+import { searchProducts } from "./searchProducts.mjs";
 
-loadheaderfooter()
+loadheaderfooter();
 
-// Gets the document elements to render
-const parentNode = document.querySelector(".product-list")
-// search criteria 
-const params = new URLSearchParams(window.location.search);
-const searchTerm = params.get("search-product");
-const keyword = document.querySelector("#keyword")
+const listElement = document.querySelector(".product-list");
+const keywordElement = document.querySelector("#keyword");
+// getParam returns null when the URL has no search term
+const searchTerm = (getParam("search-product") || "").trim();
 
+async function showResults() {
+  keywordElement.textContent = searchTerm;
 
-// get the tents from the API; the category is passed to getData()
-const productlist = await new ProductData().getData("tents")
-// finds matches based on the criteria 
-const matches = productlist.filter(product =>
-    product.Name.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  if (!searchTerm) {
+    listElement.innerHTML = "<li>Type a product name to search.</li>";
+    return;
+  }
 
-// empty array handler
-if (matches.length === 0){
-    keyword.textContent = `${searchTerm} (Item not found)`
-}else{
-    keyword.textContent = searchTerm
-    const resultList = new ProductList("tents", matches, parentNode, true)
-    resultList.init()
+  try {
+    const { matches, failedCount } = await searchProducts(
+      searchTerm,
+      new ProductData(),
+    );
+
+    if (matches.length === 0) {
+      keywordElement.textContent = `${searchTerm} (Item not found)`;
+      return;
+    }
+
+    // criteria = true tells ProductList the "data source" is already an array
+    new ProductList("search", matches, listElement, true).init();
+
+    if (failedCount > 0) {
+      listElement.insertAdjacentHTML(
+        "beforebegin",
+        "<p>Some categories could not be searched, so results may be incomplete.</p>",
+      );
+    }
+  } catch (err) {
+    listElement.innerHTML =
+      "<li>Sorry, search is unavailable right now. Please try again.</li>";
+  }
 }
 
-
-
-
-
+showResults();

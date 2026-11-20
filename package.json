@@ -29,6 +29,11 @@
       "@babel/preset-env"
     ]
   },
+  "jest": {
+    "transform": {
+      "\\.m?js$": "babel-jest"
+    }
+  },
   "browserslist": [
     "last 3 and_chr versions",
     "last 3 chrome versions",
