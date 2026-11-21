@@ -195,14 +195,23 @@ button {
 
 .product-list {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: wrap;
   list-style-type: none;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .product-list a {
   text-decoration: none;
   color: var(--dark-grey);
+}
+
+.product-list img {
+  height: auto;
+  width: 200px;
+}
+
+.product-list li a h2 {
+  text-align: center;
 }
 
 /* Styles for product lists */

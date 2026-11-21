@@ -45,7 +45,9 @@ function renderListWithTemplate(
   list,
   position = "afterbegin",
   clear = false,
-) {
+)
+
+{
   // call the template once for each item, giving an array of HTML strings
   const htmlStrings = list.map(templateFn);
 
@@ -58,6 +60,34 @@ function renderListWithTemplate(
   parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
 
+function renderWithTemplate(
+  template,
+  parentElement,
+  data,
+  callback
+) {
+  parentElement.innerHTML = template;
+  if (callback) {
+    callback(data);
+  }
+}
+
+async function loadTemplate(path) {
+  const res = await fetch(path);
+  const template = await res.text();
+  return template;
+}
+
+async function loadHeaderFooter() {
+  const headerTemplate = await loadTemplate("/partials/header.html");
+  const footerTemplate = await loadTemplate("/partials/footer.html");
+
+  const headerElement = document.querySelector("#header");
+  const footerElement = document.querySelector("#footer");
+
+  renderWithTemplate(headerTemplate, headerElement);
+  renderWithTemplate(footerTemplate, footerElement);
+}
 
 function getQtyItems() {
   let cart = getLocalStorage("so-cart") || [];
@@ -89,4 +119,7 @@ export {
   getQtyItems,
   updateCartCount,
   renderListWithTemplate,
+  loadHeaderFooter,
+  loadTemplate, 
+  renderWithTemplate
 };

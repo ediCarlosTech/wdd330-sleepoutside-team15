@@ -61,7 +61,7 @@ export default class ProductDetails {
 
   renderProductDetails() {
     const product = this.product;
-
+    
     // add the product name in the browser tab
     document.title = `Sleep Outside | ${product.Name}`;
 
@@ -69,7 +69,7 @@ export default class ProductDetails {
     document.getElementById("productName").textContent = product.NameWithoutBrand;
 
     const productImage = document.getElementById("productImage");
-    productImage.src = product.Image;
+    productImage.src = product.Images.PrimaryLarge; 
     productImage.alt = product.NameWithoutBrand;
 
     document.getElementById("productPrice").textContent =
