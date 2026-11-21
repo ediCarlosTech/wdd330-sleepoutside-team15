@@ -157,3 +157,16 @@
 ---
 
 _BYU-Pathway Worldwide improves lives through access to spiritually based, online affordable higher education. Its mission is to develop disciples of Jesus Christ who are leaders in their homes, the Church, and their communities._
+
+#### Week 5: Quick View Upgrade
+
+- **Add to Cart from Quick View:** The quick view pop-up now has an "Add to Cart" button. It uses the shared `addToCart()` from `js/cartUtils.mjs`, so the quantity limit of 99 and the cart count on the backpack icon work the same as on the product page. A short "was added to your cart" message appears under the button.
+- **`QuickView` class:** The pop-up code moved from `product-listing.js` to the new `js/QuickView.mjs` module, the same way the product list uses `ProductList`.
+  - The constructor takes the pop-up element and the data source (`ExternalServices`).
+  - `init()` sets up the close button, backdrop click, Add to Cart button, and keyboard listener.
+  - `open(productId, opener)` loads the product and shows it. `close()` hides it.
+  - `product-listing.js` now only creates a `QuickView` and opens it when a "Quick View" button is clicked.
+- **Accessibility:** The pop-up has `role="dialog"`, `aria-modal`, and is named by the product name. The "X" button has an `aria-label`. Focus moves into the pop-up when it opens, Tab stays inside it, and focus goes back to the "Quick View" button when it closes. Escape still closes it. The "added to your cart" message is a live region, so screen readers announce it.
+- **Error state:** If the product cannot be loaded (bad ID or network error), the pop-up shows "Sorry, we could not load this product." and turns the Add to Cart button off, instead of doing nothing. The old `console.error` was removed.
+- **Safer rendering:** The product name, brand, price, and color are set with `textContent`. Only the description (which contains markup from the API) uses `innerHTML`.
+- **Tests:** `src/test/QuickView.test.js` has 17 tests for opening, the unknown product and failed fetch cases, adding to the cart, closing, and the focus trap.

@@ -664,3 +664,51 @@ header#main-header .cart {
   color: green;
   font-weight: bold;
 }
+
+/* ========================================
+   QUICK VIEW "ADD TO CART" AND FOCUS STYLES
+======================================== */
+
+/* "Add to Cart" inside the quick view pop-up, styled like #addToCart */
+.quick-view__add {
+  display: block;
+  min-height: 44px;
+  margin: 1rem auto 0;
+  padding: 0.5em 2em;
+  border: 0;
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: var(--large-font);
+  cursor: pointer;
+}
+
+.quick-view__add:hover:not(:disabled) {
+  background-color: var(--tertiary-color);
+}
+
+.quick-view__add:disabled {
+  background-color: var(--light-grey);
+  color: var(--dark-grey);
+  cursor: not-allowed;
+}
+
+/* "X was added to your cart." message under the button */
+.quick-view__status {
+  min-height: 1.5em;
+  text-align: center;
+  font-size: var(--small-font);
+  color: var(--secondary-color);
+}
+
+/* keyboard users can see where focus is inside the pop-up */
+.close-modal:focus-visible,
+.quick-view__add:focus-visible {
+  outline: 3px solid var(--tertiary-color);
+  outline-offset: 2px;
+}
+
+/* the "X" needs a big enough tap target on touch screens */
+.close-modal {
+  min-width: 44px;
+  min-height: 44px;
+}
