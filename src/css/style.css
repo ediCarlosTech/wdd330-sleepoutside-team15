@@ -493,7 +493,7 @@ p {
   grid-column: 3;
 }
 
-/* cart footer with the total; will also hold the Checkout button */
+/* cart footer with the total and the Checkout button */
 .cart-footer {
   margin-top: 1em;
   text-align: right;
@@ -503,6 +503,20 @@ p {
   font-size: var(--large-font);
   font-weight: bold;
   color: var(--secondary-color);
+}
+
+/* the Checkout link in the cart footer, styled like the "Add to Cart" button */
+.checkout-button {
+  display: inline-block;
+  padding: 0.5em 2em;
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: var(--large-font);
+  text-decoration: none;
+}
+
+.checkout-button:hover {
+  background-color: var(--tertiary-color);
 }
 
 @media screen and (min-width: 500px) {

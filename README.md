@@ -106,12 +106,47 @@
 
 #### Week 3: Shopping Cart Refactor
 
-- **`ShoppingCart` class:** The cart page code moved from `cart.js` to the new `js/ShoppingCart.mjs` module, the use as the product list uses `ProductList`.
+- **`ShoppingCart` class:** The cart page code moved from `cart.js` to the new `js/ShoppingCart.mjs` module, the same way the product list uses `ProductList`.
   - The constructor takes the local storage key (`"so-cart"`) and the list element the items are rendered into.
   - `init()` sets up the click listener for the "X", "-", and "+" buttons and renders the cart.
   - `cartItemTemplate(item)` is at the top of the module, and `renderCartContents()` uses the shared `renderListWithTemplate()` helper with it.
   - The cart works the same as before: quantity limit of 99, "-" at quantity 1 removes the item, the total, and the empty cart message.
 - **`cart.js`:** Now only loads the header and footer, creates a `ShoppingCart`, and calls `init()`.
+
+#### Week 3: Wishlist and Search
+
+- **Wishlist:** The product page has an "Add to Wishlist" button, and the header links to the new `wishlist/index.html` page.
+  - The wishlist is saved in local storage (`so-wishlist`), and a product is only added once. After it is added, the button shows "Added to Wishlist".
+  - On the wishlist page, each product can be moved to the cart or removed.
+  - Adding to the cart is now in `js/cartUtils.mjs` (`addToCart()`), so the product page and the wishlist share it.
+- **Search all categories:** The header search now looks through tents, backpacks, sleeping bags, and hammocks, not just tents.
+  - The search is in the new `js/searchProducts.mjs` module.
+  - If one category cannot be loaded, the results from the others still show, with a note that they may be incomplete.
+- **Tests:** `npm test` runs the Jest tests in `src/test/`. `searchProducts.test.js` tests the search.
+
+#### Week 4: Checkout
+
+- **Checkout button:** The cart footer has a Checkout button that opens `checkout/index.html`. Like the total, it only shows when the cart has items.
+- **Checkout form:** The checkout page asks for the first and last name, the address (billing and shipping are the same), and the card number, expiration date, and security code.
+  - Every field is `required`, so the form does not submit until all of them are filled in.
+  - The input names (`fname`, `lname`, `street`, `city`, `state`, `zip`, `cardNumber`, `expiration`, `code`) are the keys the server expects, so they must not be changed.
+- **Order summary:** Shows the subtotal, tax, shipping estimate, and order total.
+  - The subtotal is shown when the page loads. Tax, shipping, and the order total are shown after the zip code is filled in.
+  - Tax is 6% of the subtotal. Shipping is $10 for the first item plus $2 for each additional item (a quantity of 2 counts as 2 items).
+- **`CheckoutProcess` class:** The new `js/CheckoutProcess.mjs` module works out the totals and submits the order.
+  - `calculateItemSubTotal()` shows the subtotal, and `calculateOrderTotal()` shows the tax, shipping, and order total.
+  - `checkout(form)` turns the form into an order object, adds the order date, totals, and cart items, and sends it to the server.
+  - `packageItems()` turns the cart items into the simpler `{ id, name, price, quantity }` form the server expects.
+- **`ProductData` renamed to `ExternalServices`:** The module now does more than get products, so `js/ProductData.mjs` is now `js/ExternalServices.mjs`, and every import was updated.
+  - The new `checkout(order)` method sends the order to `checkout` on the API server with a `POST` request and returns the server's JSON answer.
+  - For a test order that succeeds, use card number `1234123412341234`, security code `123`, and any expiration date in the future.
+- **Quick view:** Product cards on the product listing page have a "Quick View" button that opens the product's image, brand, name, price, color, and description in a pop-up window. It closes with the "×" button, by clicking outside it, or with the Escape key.
+- **Newsletter:** The home page has a newsletter sign-up form. It is a demo, so it only shows a thank-you message and does not send the email anywhere.
+- **Fixes:**
+  - `vite.config.js` listed `checkout` twice, which made `npm run lint` fail. The old, empty `cart/checkout.html` was removed, and only `checkout/index.html` is built.
+  - The cart page had its footer and `</body>` twice; the extra copy was removed.
+  - The Checkout button is styled like the "Add to Cart" button.
+  
 
 #### Code Style
 
