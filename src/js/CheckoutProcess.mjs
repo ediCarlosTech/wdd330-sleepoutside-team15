@@ -1,4 +1,9 @@
-import { getLocalStorage } from "./utils.mjs";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  alertMessage,
+  removeAllAlerts,
+} from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
 
 const taxRate = 0.06
@@ -123,6 +128,14 @@ export default class CheckoutProcess {
 
   // Prepare the order information
   async checkout(form) {
+    // clear the messages from an earlier try so only the new ones show
+    removeAllAlerts();
+
+    // nothing to order: do not send an empty order to the server
+    if (this.list.length === 0) {
+      alertMessage("Your cart is empty. Add a product before checking out.");
+      return;
+    }
 
     // Get customer information from the form
     const order = formDataToJSON(form);
@@ -141,7 +154,24 @@ export default class CheckoutProcess {
     // Add products to the order
     order.items = packageItems(this.list);
 
-    // Send order to the server
-    return await this.services.checkout(order);
+    // sending the order is the part that can fail, so it goes in "try"
+    try {
+      // Send order to the server
+      await this.services.checkout(order);
+
+      // the order worked: empty the cart and go to the success page
+      setLocalStorage(this.key, []);
+      window.location.href = "success.html";
+    } catch (err) {
+      // the order did not work: stay on this page so the customer keeps
+      // what they typed, and show what went wrong
+      if (err.name === "servicesError") {
+        // the server sends one message per problem
+        Object.values(err.message).forEach((message) => alertMessage(message));
+      } else {
+        // no answer from the server, for example no internet connection
+        alertMessage("The order could not be sent. Please try again.");
+      }
+    }
   }
 }

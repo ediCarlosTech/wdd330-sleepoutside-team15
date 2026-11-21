@@ -1,0 +1,34 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleep Outside | Order Placed</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <!-- this page only needs the header and footer; the cart was already
+         emptied by CheckoutProcess.mjs before coming here, so the cart badge
+         in the header shows no items -->
+    <script type="module">
+      import { loadheaderfooter } from "../js/utils.mjs";
+      loadheaderfooter();
+    </script>
+  </head>
+
+  <body>
+    <header class="divider" id="main-header"></header>
+
+    <main class="divider">
+      <section class="products success">
+        <h1>Thank you for your order!</h1>
+        <p>
+          Your order was placed successfully. We are getting your gear ready
+          to ship, so you can get outside soon.
+        </p>
+        <a href="/" class="checkout-button">Continue Shopping</a>
+      </section>
+    </main>
+
+    <footer id="dfooter"></footer>
+  </body>
+</html>

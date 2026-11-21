@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, alertMessage, removeAllAlerts,} from "./utils.mjs";
 import { addToCart } from "./cartUtils.mjs";
 
 // common product detail page for one products
@@ -42,6 +42,12 @@ export default class ProductDetails {
 
   addProductToCart() {
     addToCart(this.product);
+
+    // tell the customer it worked; remove the last message first so
+    // clicking "Add to Cart" again does not stack up messages
+    // false: do not scroll, the customer stays where they are on the page
+    removeAllAlerts();
+    alertMessage(`${this.product.NameWithoutBrand} was added to your cart.`, false);
   }
 
   addProductToWishlist() {

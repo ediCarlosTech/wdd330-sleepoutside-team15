@@ -146,7 +146,27 @@
   - `vite.config.js` listed `checkout` twice, which made `npm run lint` fail. The old, empty `cart/checkout.html` was removed, and only `checkout/index.html` is built.
   - The cart page had its footer and `</body>` twice; the extra copy was removed.
   - The Checkout button is styled like the "Add to Cart" button.
-  
+
+#### Week 4: Error Checking and Validation
+
+- **Server error details:** `convertToJson()` in `js/ExternalServices.mjs` now reads the response body before checking if the request worked.
+  - When an order fails, the server sends a 400 response with one message per problem, for example `{ "cardNumber": "Invalid Card Number", "expiration": "Card expired" }`.
+  - `convertToJson()` throws `{ name: "servicesError", message: <that body> }` instead of `new Error("Bad Response")`, which could only hold a string.
+  - `checkout()` uses `VITE_SERVER_URL` instead of typing the server address again.
+- **Catching the error:** `checkout(form)` in `js/CheckoutProcess.mjs` sends the order inside `try { } catch (err) { }`.
+  - **Order placed:** the cart is emptied and the customer goes to the new `checkout/success.html` page, which `vite.config.js` now builds.
+  - **Order failed:** the customer stays on the form so nothing they typed is lost, and each message from the server is shown as an alert.
+  - **No answer from the server:** for example with no internet connection, an alert asks the customer to try again.
+  - **Empty cart:** the order is not sent, and an alert says the cart is empty.
+- **Form validation:** Every field is `required`, and the form listens for `submit`, so the browser shows its own message for a field that is empty or wrong. `checkValidity()` and `reportValidity()` also check the form before the order is sent.
+  - Fields with a fixed format also have a `pattern` and `maxlength`: a 2-letter state, a 5-digit zip code, a 16-digit card number, an expiration date as `MM/YY`, and a 3-digit security code.
+  - Each `title` explains the format in the browser's message, and `placeholder` shows an example.
+  - `inputmode="numeric"` opens the number keyboard on phones.
+- **`alertMessage(message, scroll = true)`:** A new helper in `js/utils.mjs` that shows a message at the top of `main`, with an "X" to close it.
+  - `scroll` scrolls the page back to the top so the message is seen, because the checkout form is longer than a phone screen.
+  - The message is added with `textContent`, so text from the server is never run as HTML.
+  - `removeAllAlerts()` removes the old messages, so errors from an earlier try do not stay on the page.
+- **Added to cart message:** The product page shows "<product> was added to your cart." after "Add to Cart" is clicked. It does not scroll, so the customer stays where they are.
 
 #### Code Style
 

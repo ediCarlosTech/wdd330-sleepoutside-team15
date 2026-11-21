@@ -519,6 +519,45 @@ p {
   background-color: var(--tertiary-color);
 }
 
+/* messages from alertMessage() in utils.mjs, at the top of "main":
+   the message on the left and the "X" to close it on the right */
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5em;
+  padding: 0 0.5em;
+  background-color: var(--primary-color);
+  border: 1px solid var(--tertiary-color);
+}
+
+.alert p {
+  padding: 0.75em 0.5em;
+}
+
+.alert button {
+  padding: 0.25em 0.5em;
+  background-color: transparent;
+  border: 0;
+  color: var(--dark-grey);
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.alert button:hover {
+  color: var(--tertiary-color);
+}
+
+/* the order placed page */
+.success {
+  text-align: center;
+}
+
+.success p {
+  margin: 1em 0;
+}
+
 @media screen and (min-width: 500px) {
   body {
     max-width: 1080px;

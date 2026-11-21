@@ -41,10 +41,16 @@
             <input type="text" id="city" name="city" autocomplete="address-level2" required>
 
             <label for="state">State:</label>
-            <input type="text" id="state" name="state" autocomplete="address-level1" required>
+            <!-- "pattern" checks the format, and "title" is shown in the
+                 browser's message when the format is wrong -->
+            <input type="text" id="state" name="state" autocomplete="address-level1"
+              placeholder="ID" maxlength="2" pattern="[A-Za-z]{2}"
+              title="The 2-letter state code, for example ID" required>
 
             <label for="zip">Zip Code:</label>
-            <input type="text" id="zip" name="zip" autocomplete="postal-code" required>
+            <input type="text" id="zip" name="zip" autocomplete="postal-code"
+              inputmode="numeric" placeholder="83440" maxlength="5" pattern="\d{5}"
+              title="A 5-digit zip code" required>
            </fieldset>
 
            <!-- PAYMENT INFORMATION-->
@@ -52,13 +58,19 @@
             <legend>Payment Information</legend>
 
             <label for="cardNumber">Credit Card Number:</label>
-            <input type="text" id="cardNumber" name="cardNumber" autocomplete="cc-number" required>
+            <input type="text" id="cardNumber" name="cardNumber" autocomplete="cc-number"
+              inputmode="numeric" maxlength="16" pattern="\d{16}"
+              title="The 16-digit card number, with no spaces" required>
 
             <label for="expiration">Expiration Date:</label>
-            <input type="text" id="expiration" name="expiration" placeholder="MM/YY" autocomplete="cc-exp" required>
+            <input type="text" id="expiration" name="expiration" placeholder="MM/YY" autocomplete="cc-exp"
+              maxlength="5" pattern="(0?[1-9]|1[0-2])/\d{2}"
+              title="The month and year, for example 08/30" required>
 
             <label for="code">Security Code:</label>
-            <input type="text" id="code" name="code" inputmode="numeric" autocomplete="cc-csc" required>
+            <input type="text" id="code" name="code" inputmode="numeric" autocomplete="cc-csc"
+              maxlength="3" pattern="\d{3}"
+              title="The 3-digit code on the back of the card" required>
            </fieldset>
 
            <!-- ORDER SUMMARY-->

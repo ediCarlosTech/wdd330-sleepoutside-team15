@@ -167,6 +167,39 @@ function animateCartIcon() {
   restartAnimation(qs(".cartItemsQty"));
 }
 
+// show a message at the top of the "main" element, with an "X" to close it
+// used for checkout errors and "added to cart", so it is not tied to one page
+// scroll: true scrolls back to the top so the message is seen
+function alertMessage(message, scroll = true) {
+  const alert = document.createElement("div");
+  alert.classList.add("alert");
+  // "alert" tells screen readers to read the message right away
+  alert.setAttribute("role", "alert");
+
+  // textContent, not innerHTML: the message can come from the server
+  const text = document.createElement("p");
+  text.textContent = message;
+
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.textContent = "X";
+  closeButton.setAttribute("aria-label", "Close message");
+  closeButton.addEventListener("click", () => alert.remove());
+
+  alert.append(text, closeButton);
+  document.querySelector("main").prepend(alert);
+
+  if (scroll) {
+    window.scrollTo(0, 0);
+  }
+}
+
+// remove every message added by alertMessage()
+// so old errors do not stay on the page when the form is submitted again
+function removeAllAlerts() {
+  document.querySelectorAll(".alert").forEach((alert) => alert.remove());
+}
+
 // add new utility functions to this list so other modules can import them
 export {
   qs,
@@ -179,5 +212,7 @@ export {
   animateCartIcon,
   renderListWithTemplate,
   renderWithTemplate,
-  loadheaderfooter
+  loadheaderfooter,
+  alertMessage,
+  removeAllAlerts,
 };

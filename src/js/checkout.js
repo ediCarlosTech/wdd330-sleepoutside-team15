@@ -23,18 +23,19 @@ zipInput.addEventListener("change", () => {
 const checkoutForm = document.querySelector("#checkoutForm");
 
 // Handle form submission
-checkoutForm.addEventListener("submit", async (event) => {
-
+// the "submit" event fires once the HTML validation passes
+checkoutForm.addEventListener("submit", (event) => {
+  // keep the form from reloading the page; the order is sent with fetch
   event.preventDefault();
 
-  if (!checkoutForm.reportValidity()) {
-    return;
-  }
+  // checkValidity() is false if any field breaks rules
+  // reportValidity() shows the browser's messages for fields
+  const isValid = checkoutForm.checkValidity();
+  checkoutForm.reportValidity();
 
-  try {
-    await checkout.checkout(checkoutForm);
-  } catch (error) {
-    console.error("Checkout request failed:", error);
+  // stop here if the form is not valid
+  if (isValid) {
+    // CheckoutProcess catches its own errors and shows them as alerts
+    checkout.checkout(checkoutForm);
   }
-
 });
