@@ -89,6 +89,46 @@
           ></p>
         </form>
       </section>
+
+      <div
+        id="registration-modal"
+        class="registration-modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="registration-title"
+      >
+        <div class="registration-modal__content">
+          <button
+            id="close-registration"
+            class="registration-modal__close"
+            type="button"
+            aria-label="Close registration"
+          >
+            &times;
+          </button>
+
+          <h2 id="registration-title">Join Our Outdoor Giveaway</h2>
+
+          <p>Register with Sleep Outside for a chance to win outdoor gear.</p>
+
+          <form id="registration-form">
+            <label for="registration-email">Email address</label>
+
+            <input
+              id="registration-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              required
+            />
+
+            <button type="submit">Register for the Giveaway</button>
+
+            <p id="registration-message" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
     </main>
 
     <footer id="dfooter"></footer>

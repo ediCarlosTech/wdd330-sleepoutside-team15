@@ -5,10 +5,7 @@ import CheckoutProcess from "./CheckoutProcess.mjs";
 loadheaderfooter();
 
 // Initialize checkout
-const checkout = new CheckoutProcess(
-  "so-cart",
-  "#order-summary"
-);
+const checkout = new CheckoutProcess("so-cart", "#order-summary");
 
 checkout.init();
 
@@ -24,7 +21,6 @@ const checkoutForm = document.querySelector("#checkoutForm");
 
 // Handle form submission
 checkoutForm.addEventListener("submit", async (event) => {
-
   event.preventDefault();
 
   if (!checkoutForm.reportValidity()) {
@@ -36,5 +32,4 @@ checkoutForm.addEventListener("submit", async (event) => {
   } catch (error) {
     console.error("Checkout request failed:", error);
   }
-
 });
