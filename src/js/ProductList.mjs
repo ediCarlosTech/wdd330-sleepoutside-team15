@@ -29,10 +29,6 @@ function productCardTemplate(product) {
       <h2 class="card__name">${product.NameWithoutBrand}</h2>
       ${priceDisplay}
     </a>
-
-    <button class="quick-view" data-id="${product.Id}">
-      Quick View
-    </button>
   </li>`;
 }
 
@@ -43,7 +39,7 @@ export default class ProductList {
     // the same class can list any category, from any data source, into any element
     // the product category to list, for example "tents"
     this.category = category;
-    // a ExternalServices instance used to get the products
+    // a ProductData instance used to get the products
     this.dataSource = dataSource;
     // the HTML element the product cards are rendered into
     this.listElement = listElement;
@@ -61,7 +57,7 @@ export default class ProductList {
       // if dataSource returns a promise, use await to get the list of products
       // init is async so it can use await
       // the category tells the API which products to send back
-      list = await this.dataSource.getData(this.category);
+      list = await this.dataSource.getData(this.category)
     }
     // preserve the original order
     this.originalProducts = [...list];
