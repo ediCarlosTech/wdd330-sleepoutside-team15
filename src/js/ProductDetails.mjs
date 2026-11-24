@@ -197,10 +197,14 @@ export default class ProductDetails {
     document.getElementById("productName").textContent =
       product.NameWithoutBrand;
 
-    // Display product image
-    const productImage = document.getElementById("productImage");
+    // Display responsive product image
+    const { PrimaryMedium, PrimaryLarge, PrimaryExtraLarge } = product.Images;
 
-    productImage.src = product.Images.PrimaryLarge;
+    document.getElementById("productImageSmall").srcset = PrimaryMedium;
+    document.getElementById("productImageMedium").srcset = PrimaryLarge;
+
+    const productImage = document.getElementById("productImage");
+    productImage.src = PrimaryExtraLarge;
     productImage.alt = product.NameWithoutBrand;
 
     // Display product price

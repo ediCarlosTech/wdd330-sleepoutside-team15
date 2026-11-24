@@ -23,7 +23,11 @@
         <h2 id="productName" class="divider"></h2>
 
         <!-- product image, from "Images.PrimaryLarge" product must load -->
-        <img id="productImage" class="divider" alt="" />
+        <picture>
+          <source id="productImageSmall" media="(max-width: 480px)" />
+          <source id="productImageMedium" media="(max-width: 800px)" />
+          <img id="productImage" class="divider" src="" alt="" />
+        </picture>
 
         <!-- price, from "FinalPrice" -->
         <p id="productPrice" class="product-card__price"></p>
