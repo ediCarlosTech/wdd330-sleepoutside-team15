@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Team Builder</title>
+    <meta
+      name="description"
+      content="Search Pokémon, see their stats and types, and build a balanced team of six."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/css/style.css" />
+    <script src="/src/js/main.js" type="module"></script>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <a class="logo" href="/">
+        <svg class="logo__icon" viewBox="0 0 48 48" aria-hidden="true">
+          <circle
+            cx="24"
+            cy="24"
+            r="10"
+            fill="#fff"
+            stroke="#2d2d2d"
+            stroke-width="3"
+          />
+          <path d="M14 24h7m6 0h7" stroke="#2d2d2d" stroke-width="3" />
+          <circle
+            cx="24"
+            cy="24"
+            r="3"
+            fill="#ffcb05"
+            stroke="#2d2d2d"
+            stroke-width="2"
+          />
+          <g fill="#ffcb05" stroke="#2d2d2d" stroke-width="2">
+            <circle cx="24" cy="5" r="3.5" />
+            <circle cx="40.5" cy="14.5" r="3.5" />
+            <circle cx="40.5" cy="33.5" r="3.5" />
+            <circle cx="24" cy="43" r="3.5" />
+            <circle cx="7.5" cy="33.5" r="3.5" />
+            <circle cx="7.5" cy="14.5" r="3.5" />
+          </g>
+        </svg>
+        <span>Team Builder</span>
+      </a>
+
+      <form id="search-form" class="search" role="search">
+        <label class="visually-hidden" for="search-input">Pokémon name</label>
+        <input
+          id="search-input"
+          name="search"
+          type="search"
+          placeholder="Search by name, like pikachu"
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <p class="team-count">Team <span id="team-count">0</span>/6</p>
+    </header>
+
+    <main>
+      <h1>Find Pokémon for your team</h1>
+
+      <div class="filters">
+        <label for="type-filter">Type</label>
+        <select id="type-filter">
+          <option value="">All types</option>
+        </select>
+      </div>
+
+      <p id="result-summary" class="summary" role="status"></p>
+      <div id="loader" class="pokeball-loader hide" aria-hidden="true"></div>
+      <ul id="results" class="pokemon-grid"></ul>
+      <button id="load-more" class="button hide" type="button">
+        Show more Pokémon
+      </button>
+    </main>
+
+    <dialog id="details-dialog" class="details" aria-label="Pokémon details">
+      <form method="dialog">
+        <button class="details__close" aria-label="Close details">
+          &times;
+        </button>
+      </form>
+      <div id="details-content" class="details__content"></div>
+    </dialog>
+  </body>
+</html>

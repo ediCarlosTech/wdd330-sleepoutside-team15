@@ -1,0 +1,34 @@
+{
+  "name": "pokemon-team-builder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Build balanced teams of six Pokémon and see their strengths and weaknesses.",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build --emptyOutDir",
+    "lint": "eslint \"src/**/*.js\" vite.config.js",
+    "format": "prettier --ignore-path ./.gitignore --write \"./**/*.{html,json,js,css,md}\"",
+    "test": "jest"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^8.0.7",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.2",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
+    "prettier": "^3.10.1",
+    "vite": "^8.3.8"
+  }
+}
