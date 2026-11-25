@@ -3,6 +3,7 @@ import {
   setLocalStorage,
   updateCartCount,
   renderListWithTemplate,
+  imageHandler
 } from "./utils.mjs";
 
 // the most of one product allowed in the cart (same limit as the product page)
@@ -14,13 +15,11 @@ function cartItemTemplate(item) {
 
   // each button carries the product ID in "data-id" and what it does in
   // "data-action" so the click listener knows which item to change
+  // the imageHandler assign all responsive images. 
   return `<li class="cart-card divider">
   <button class="cart-card__remove" data-id="${item.Id}" data-action="remove" aria-label="Remove ${item.Name}">X</button>
   <a href="#" class="cart-card__image">
-    <img
-      src="${item.Images.PrimaryMedium}"
-      alt="${item.Name}"
-    />
+    ${imageHandler(item)}
   </a>
   <a href="#">
     <h2 class="card__name">${item.Name}</h2>

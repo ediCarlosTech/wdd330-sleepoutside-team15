@@ -1,4 +1,5 @@
 import { addToCart } from "./cartUtils.mjs";
+import { imageHandler } from "./utils.mjs";
 
 // things inside the pop-up that can take keyboard focus (used to trap Tab)
 const FOCUSABLE =
@@ -82,10 +83,9 @@ export default class QuickView {
   renderProduct(product) {
     this.product = product;
 
+    // imageHandler adds responsive images
     const image = this.modal.querySelector("#quick-view-image");
-    image.src =
-      product.Images?.PrimaryLarge || product.Images?.PrimaryMedium || "";
-    image.alt = product.NameWithoutBrand || "";
+    image.innerHTML = imageHandler(product);
 
     this.setText("#quick-view-brand", product.Brand?.Name || "");
     this.setText("#quick-view-name", product.NameWithoutBrand || product.Name);

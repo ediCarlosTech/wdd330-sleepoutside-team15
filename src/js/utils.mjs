@@ -167,6 +167,24 @@ function animateCartIcon() {
   restartAnimation(qs(".cartItemsQty"));
 }
 
+function imageHandler(product) {
+  // const { PrimaryMedium, PrimaryLarge, PrimaryExtraLarge } = product.Images;
+
+  // // Display responsive product image
+  // document.getElementById("productImageEstraLarge").srcset = PrimaryExtraLarge;
+  // document.getElementById("productImageSmall").srcset = PrimaryMedium;
+  // document.getElementById("productImageMedium").srcset = PrimaryLarge;
+
+  // const productImage = document.getElementById("productImage");
+  // productImage.src = PrimaryExtraLarge;
+  // productImage.alt = product.NameWithoutBrand;
+  return `<picture>
+      <source media="(min-width: 1024px)" srcset="${product.Images.PrimaryExtraLarge}">
+      <source media="(min-width: 768px)" srcset="${product.Images.PrimaryLarge}">
+      <img src="${product.Images.PrimaryMedium}" alt="Image of ${product.NameWithoutBrand}" />
+      </picture>`
+}
+
 // add new utility functions to this list so other modules can import them
 export {
   qs,
@@ -179,5 +197,6 @@ export {
   animateCartIcon,
   renderListWithTemplate,
   renderWithTemplate,
-  loadheaderfooter
+  loadheaderfooter,
+  imageHandler
 };

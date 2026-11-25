@@ -1,4 +1,4 @@
-import { renderListWithTemplate } from "./utils.mjs";
+import { imageHandler, renderListWithTemplate } from "./utils.mjs";
 
 // returns the HTML for one product card
 // the markup matches the product cards on the home page ("index.html")
@@ -21,10 +21,11 @@ function productCardTemplate(product) {
 
 
   // the link starts with "/" so it works from any page that lists products.
+  // <!-- <img src="${product.Images.PrimaryMedium}" alt="Image of ${product.NameWithoutBrand}" /> -->      
   return `<li class="product-card">
     <a href="/product_pages/?product=${product.Id}">
       ${discountBadge}
-      <img src="${product.Images.PrimaryMedium}" alt="Image of ${product.NameWithoutBrand}" />
+      ${imageHandler(product)}
       <h3 class="card__brand">${product.Brand.Name}</h3>
       <h2 class="card__name">${product.NameWithoutBrand}</h2>
       ${priceDisplay}
