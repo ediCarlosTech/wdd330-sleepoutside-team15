@@ -7,7 +7,8 @@ export async function findPokemonNames({ term = "", type = "" }, api) {
   // names use hyphens, so "mr mime" should find "mr-mime"
   const cleanTerm = term.trim().toLowerCase().replace(/\s+/g, "-");
 
-  let names = await api.getPokemonNames();
+  const allNames = await api.getPokemonNames();
+  let names = allNames;
 
   if (type) {
     const ofType = new Set(await api.getPokemonNamesByType(type));
@@ -16,6 +17,12 @@ export async function findPokemonNames({ term = "", type = "" }, api) {
 
   if (!cleanTerm) {
     return names;
+  }
+
+  // a number is a Pokédex number, and the name list is in that order
+  if (/^\d+$/.test(cleanTerm)) {
+    const nameById = allNames[Number(cleanTerm) - 1];
+    return nameById && names.includes(nameById) ? [nameById] : [];
   }
 
   // names that start with the term come first, then names that contain it

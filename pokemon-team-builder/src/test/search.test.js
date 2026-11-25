@@ -49,3 +49,24 @@ test("the type filter and the term work together", async () => {
 test("returns an empty list when nothing matches", async () => {
   expect(await findPokemonNames({ term: "zzz" }, api)).toEqual([]);
 });
+
+test("a number finds the Pokémon with that Pokédex number", async () => {
+  // in the real list, position 1 is Pokédex number 1
+  expect(await findPokemonNames({ term: "1" }, api)).toEqual(["bulbasaur"]);
+  expect(await findPokemonNames({ term: " 02 " }, api)).toEqual(["pikachu"]);
+});
+
+test("a number outside the list finds nothing", async () => {
+  expect(await findPokemonNames({ term: "0" }, api)).toEqual([]);
+  expect(await findPokemonNames({ term: "999" }, api)).toEqual([]);
+});
+
+test("a number respects the type filter", async () => {
+  // bulbasaur is #1 but not electric
+  expect(await findPokemonNames({ term: "1", type: "electric" }, api)).toEqual(
+    [],
+  );
+  expect(await findPokemonNames({ term: "2", type: "electric" }, api)).toEqual([
+    "pikachu",
+  ]);
+});

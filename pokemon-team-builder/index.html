@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Team Builder</title>
+    <meta
+      name="description"
+      content="Search Pokémon, see their stats and types, and build a balanced team of six."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/css/style.css" />
+    <script src="/src/js/main.js" type="module"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="logo" href="#/search">
+        <svg class="logo__icon" viewBox="0 0 48 48" aria-hidden="true">
+          <circle
+            cx="24"
+            cy="24"
+            r="10"
+            fill="#fff"
+            stroke="#2d2d2d"
+            stroke-width="3"
+          />
+          <path d="M14 24h7m6 0h7" stroke="#2d2d2d" stroke-width="3" />
+          <circle
+            cx="24"
+            cy="24"
+            r="3"
+            fill="#ffcb05"
+            stroke="#2d2d2d"
+            stroke-width="2"
+          />
+          <g fill="#ffcb05" stroke="#2d2d2d" stroke-width="2">
+            <circle cx="24" cy="5" r="3.5" />
+            <circle cx="40.5" cy="14.5" r="3.5" />
+            <circle cx="40.5" cy="33.5" r="3.5" />
+            <circle cx="24" cy="43" r="3.5" />
+            <circle cx="7.5" cy="33.5" r="3.5" />
+            <circle cx="7.5" cy="14.5" r="3.5" />
+          </g>
+        </svg>
+        <span>Team Builder</span>
+      </a>
+
+      <form id="search-form" class="search" role="search">
+        <label class="visually-hidden" for="search-input"
+          >Pokémon name or number</label
+        >
+        <input
+          id="search-input"
+          name="search"
+          type="search"
+          placeholder="Search by name or number"
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <a id="team-link" class="team-count" href="#/team"
+        ><span>Team <span id="team-count">0</span>/6</span></a
+      >
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="search-view" aria-labelledby="search-heading">
+        <h1 id="search-heading" tabindex="-1">Find Pokémon for your team</h1>
+
+        <div class="filters">
+          <label for="type-filter">Type</label>
+          <select id="type-filter">
+            <option value="">All types</option>
+          </select>
+          <button
+            id="show-favorites"
+            class="button button--secondary"
+            type="button"
+          >
+            Favorites
+          </button>
+          <button
+            id="show-recent"
+            class="button button--secondary"
+            type="button"
+          >
+            Recently viewed
+          </button>
+        </div>
+
+        <p id="result-summary" class="summary" role="status"></p>
+        <div id="loader" class="pokeball-loader hide" aria-hidden="true"></div>
+        <ul id="results" class="pokemon-grid"></ul>
+        <button id="load-more" class="button hide" type="button">
+          Show more Pokémon
+        </button>
+      </section>
+
+      <section id="team-view" class="hide" aria-labelledby="team-heading">
+        <h1 id="team-heading" tabindex="-1">Your team</h1>
+        <p id="team-message" class="summary" role="status"></p>
+
+        <ol id="team-slots" class="slots"></ol>
+
+        <div class="team-actions">
+          <form id="team-save-form" class="save-form">
+            <label for="team-name">Team name</label>
+            <input
+              id="team-name"
+              name="team-name"
+              type="text"
+              maxlength="40"
+              autocomplete="off"
+            />
+            <button class="button" type="submit">Save team</button>
+          </form>
+          <button
+            id="clear-team"
+            class="button button--secondary"
+            type="button"
+          >
+            Clear team
+          </button>
+        </div>
+
+        <section aria-labelledby="saved-heading">
+          <h2 id="saved-heading">Saved teams</h2>
+          <ul id="saved-teams" class="saved-list"></ul>
+        </section>
+
+        <section aria-labelledby="analysis-heading">
+          <h2 id="analysis-heading">Team report</h2>
+          <figure id="reaction" class="reaction hide"></figure>
+          <div id="analysis"></div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="details-dialog" class="details" aria-label="Pokémon details">
+      <form method="dialog">
+        <button class="details__close" aria-label="Close details">
+          &times;
+        </button>
+      </form>
+      <div id="details-content" class="details__content"></div>
+    </dialog>
+  </body>
+</html>
