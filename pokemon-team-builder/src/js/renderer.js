@@ -1,3 +1,5 @@
+import { ivPercent, ivText, describeOwned, sortByCp } from "./owned.js";
+
 // Builds HTML for the page. API text is escaped before it goes into a string.
 const STAT_LABELS = {
   hp: "HP",
@@ -41,15 +43,20 @@ function typeBadgesTemplate(types) {
     .join("");
 }
 
-export function pokemonCardTemplate(pokemon) {
+// reasons: why this Pokémon is recommended for the team, or undefined
+// reasons: why it is recommended (or undefined); owned: the person's best one
+export function pokemonCardTemplate(pokemon, reasons, owned) {
   const name = escapeHtml(formatName(pokemon.name));
+  const note = reasons ? escapeHtml(reasons.join(" ")) : "";
 
-  return `<li class="pokemon-card">
-  <button type="button" class="pokemon-card__button" data-name="${escapeHtml(pokemon.name)}">
+  return `<li class="pokemon-card${reasons ? " pokemon-card--recommended" : ""}">
+  <button type="button" class="pokemon-card__button" data-name="${escapeHtml(pokemon.name)}" data-note="${note}">
     <img src="${escapeHtml(pokemon.image)}" alt="" width="120" height="120" loading="lazy" />
     <span class="pokemon-card__id">${formatId(pokemon.id)}</span>
     <span class="pokemon-card__name">${name}</span>
     <span class="type-list">${typeBadgesTemplate(pokemon.types)}</span>
+    ${reasons ? '<span class="badge-recommended">Recommended</span>' : ""}
+    ${owned ? '<span class="badge-owned">Owned</span>' : ""}
   </button>
 </li>`;
 }
@@ -63,7 +70,12 @@ function statTemplate(stat) {
   </li>`;
 }
 
-export function detailsTemplate(pokemon, description = "") {
+export function detailsTemplate(
+  pokemon,
+  description = "",
+  note = "",
+  owned = null,
+) {
   const abilities = pokemon.abilities
     .map(
       (ability) =>
@@ -76,6 +88,8 @@ export function detailsTemplate(pokemon, description = "") {
 <h2>${escapeHtml(formatName(pokemon.name))}</h2>
 <p class="type-list">${typeBadgesTemplate(pokemon.types)}</p>
 ${description ? `<p>${escapeHtml(description)}</p>` : ""}
+${note ? `<p class="details__note">Recommended for your team. ${escapeHtml(note)}</p>` : ""}
+${owned ? `<p class="details__owned">You own this Pokémon. Your best: ${escapeHtml(describeOwned(owned))}.</p>` : ""}
 <div class="details__actions">
   <button type="button" class="button" data-action="team"></button>
   <button type="button" class="button button--secondary" data-action="favorite" aria-pressed="false">Favorite</button>
@@ -186,4 +200,70 @@ export function analysisTemplate(analysis) {
 <h3>Type coverage</h3>
 <p class="note">Based on your Pokémon's types only. Moves can cover more.</p>
 <ul class="coverage">${analysis.coverage.map(coverageItemTemplate).join("")}</ul>`;
+}
+
+function ownedFlagsTemplate(entry) {
+  const flags = [];
+  if (entry.shiny) {
+    flags.push("Shiny");
+  }
+  if (entry.shadow) {
+    flags.push("Shadow");
+  }
+  if (entry.lucky) {
+    flags.push("Lucky");
+  }
+  // words, not just color, so the flags make sense without seeing the badge
+  return flags.map((flag) => `<span class="flag">${flag}</span>`).join("");
+}
+
+function ownedMovesTemplate(entry) {
+  const moves = [entry.fastMove, entry.chargedMove1, entry.chargedMove2].filter(
+    Boolean,
+  );
+  return moves.length > 0
+    ? `<p class="owned-card__moves">${moves.map(escapeHtml).join(" · ")}</p>`
+    : "";
+}
+
+// one Pokémon in the person's collection
+export function ownedCardTemplate(entry) {
+  const species = escapeHtml(formatName(entry.species));
+  const label = entry.nickname
+    ? `${escapeHtml(entry.nickname)} (${species})`
+    : species;
+  const ariaLabel = escapeHtml(
+    entry.nickname
+      ? `${entry.nickname}, ${formatName(entry.species)}`
+      : formatName(entry.species),
+  );
+  const percent = ivPercent(entry);
+  const ivs = ivText(entry);
+  const stats = [
+    entry.cp !== null ? `<span><strong>CP ${entry.cp}</strong></span>` : "",
+    entry.level !== null ? `<span>Level ${entry.level}</span>` : "",
+    ivs
+      ? `<span>IVs ${ivs}${percent === null ? "" : ` (${percent}%)`}</span>`
+      : "",
+  ].join("");
+
+  return `<li class="owned-card" data-id="${entry.id}">
+  <div class="owned-card__header">
+    <h3 class="owned-card__name">${label}</h3>
+    ${ownedFlagsTemplate(entry)}
+  </div>
+  <p class="owned-card__stats">${stats || "No stats entered yet."}</p>
+  ${percent === null ? "" : `<meter class="owned-card__iv" min="0" max="100" value="${percent}" aria-label="IV total ${percent} percent">${percent}%</meter>`}
+  ${ownedMovesTemplate(entry)}
+  ${entry.notes ? `<p class="owned-card__notes">${escapeHtml(entry.notes)}</p>` : ""}
+  <div class="owned-card__actions">
+    <button type="button" class="button button--secondary" data-action="view" data-name="${escapeHtml(entry.species)}" aria-label="View ${ariaLabel}">View</button>
+    <button type="button" class="button button--secondary" data-action="edit" data-id="${entry.id}" aria-label="Edit ${ariaLabel}">Edit</button>
+    <button type="button" class="button button--secondary" data-action="remove" data-id="${entry.id}" aria-label="Remove ${ariaLabel}">Remove</button>
+  </div>
+</li>`;
+}
+
+export function ownedListTemplate(list) {
+  return sortByCp(list).map(ownedCardTemplate).join("");
 }

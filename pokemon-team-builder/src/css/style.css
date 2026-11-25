@@ -699,3 +699,350 @@ h1:focus {
 main:focus {
   outline: none;
 }
+
+/* team size selector */
+.size-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space);
+  margin-bottom: calc(var(--space) * 2);
+}
+
+.size-control select {
+  min-height: 44px;
+  padding: 0 calc(var(--space) * 2);
+  border: 2px solid var(--grey-300);
+  border-radius: var(--space);
+  background: var(--white);
+}
+
+/* recommended Pokémon pinned to the top of the results */
+.pokemon-card--recommended .pokemon-card__button {
+  box-shadow:
+    0 0 0 3px var(--yellow),
+    var(--shadow);
+}
+
+.badge-recommended {
+  margin-top: calc(var(--space) / 2);
+  padding: 2px var(--space);
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--dark);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.details__note {
+  padding: var(--space) calc(var(--space) * 2);
+  border-radius: var(--space);
+  background: var(--grey-100);
+  font-size: 0.9375rem;
+}
+
+/* account controls in the header */
+.account-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space);
+}
+
+.header-link,
+.header-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 calc(var(--space) * 2);
+  border-radius: 999px;
+  color: var(--white);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.header-button {
+  border: 2px solid var(--white);
+  background: transparent;
+  cursor: pointer;
+}
+
+.header-link:hover,
+.header-button:hover {
+  background: var(--blue-dark);
+}
+
+.header-link[aria-current="page"] {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+.account-name {
+  padding: 0 var(--space);
+  font-weight: 500;
+}
+
+/* a short note under the header after logging in or out */
+.site-message {
+  padding: var(--space) calc(var(--space) * 2);
+  background: var(--dark);
+  color: var(--white);
+  text-align: center;
+}
+
+.site-message--error {
+  background: #b3261e;
+}
+
+/* "Only my Pokémon" and the Shiny / Shadow / Lucky boxes */
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space);
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+}
+
+.badge-owned {
+  margin-top: calc(var(--space) / 2);
+  padding: 2px var(--space);
+  border-radius: 999px;
+  background: var(--blue-dark);
+  color: var(--white);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.details__owned {
+  padding: var(--space) calc(var(--space) * 2);
+  border-radius: var(--space);
+  background: var(--grey-100);
+  border-left: 4px solid var(--blue-dark);
+  font-size: 0.9375rem;
+}
+
+/* login and delete-account pop-ups */
+.auth__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  padding: calc(var(--space) * 4) calc(var(--space) * 3) calc(var(--space) * 3);
+}
+
+.auth__form h2 {
+  font-size: 1.5rem;
+}
+
+.auth__form input,
+.owned-form input:not([type="checkbox"]),
+.owned-form textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space) calc(var(--space) * 1.5);
+  border: 2px solid var(--grey-300);
+  border-radius: var(--space);
+  font: inherit;
+}
+
+.auth__form label,
+.owned-form label:not(.check) {
+  font-weight: 500;
+}
+
+.hint {
+  font-size: 0.875rem;
+}
+
+.form-message {
+  min-height: 1.5em;
+}
+
+.form-message--error {
+  color: #b3261e;
+  font-weight: 500;
+}
+
+.link-button {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue-dark);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.button--danger {
+  background: #b3261e;
+  color: var(--white);
+}
+
+/* My Pokémon page */
+.owned-prompt,
+.owned-form {
+  padding: calc(var(--space) * 2);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.owned-prompt__actions,
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  margin-top: calc(var(--space) * 2);
+}
+
+.owned-form h2,
+.owned-heading,
+.account-section h2 {
+  margin-bottom: var(--space);
+  font-size: 1.25rem;
+}
+
+.owned-heading,
+.account-section {
+  margin-top: calc(var(--space) * 4);
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: calc(var(--space) * 1.5);
+  margin-bottom: calc(var(--space) * 1.5);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) / 2);
+}
+
+.field-group {
+  margin-bottom: calc(var(--space) * 1.5);
+  padding: var(--space) calc(var(--space) * 1.5) calc(var(--space) * 1.5);
+  border: 2px solid var(--grey-300);
+  border-radius: var(--space);
+}
+
+.field-group legend {
+  padding: 0 var(--space);
+  font-weight: 500;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space) * 3);
+}
+
+.owned-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: calc(var(--space) * 2);
+  list-style: none;
+}
+
+.owned-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  padding: calc(var(--space) * 2);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.owned-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space);
+}
+
+.owned-card__name {
+  margin-right: auto;
+  font-size: 1.125rem;
+}
+
+.flag {
+  padding: 2px var(--space);
+  border-radius: 999px;
+  background: var(--yellow);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.owned-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space) calc(var(--space) * 2);
+}
+
+.owned-card__iv {
+  width: 100%;
+  height: 12px;
+}
+
+.owned-card__moves,
+.owned-card__notes {
+  font-size: 0.9375rem;
+}
+
+.owned-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  margin-top: auto;
+}
+
+#owned-view h1:focus,
+#owned-summary:focus {
+  outline: none;
+}
+
+@media (min-width: 600px) {
+  .field-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .field--wide {
+    grid-column: 1 / -1;
+  }
+
+  .field-grid--three {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .owned-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .owned-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-link,
+  .header-button {
+    transition: none;
+  }
+}
+
+/* These set their own display, which would otherwise beat .hide (same
+   specificity, later in the file), so hiding them needs a stronger selector. */
+.header-button.hide,
+.header-link.hide,
+.check.hide {
+  display: none;
+}

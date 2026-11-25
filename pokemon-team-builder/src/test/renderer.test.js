@@ -100,4 +100,28 @@ describe("team templates", () => {
     expect(html).toContain('data-action="team"');
     expect(html).toContain('data-action="favorite"');
   });
+
+  test("a recommended card is marked and carries its reasons for the pop-up", async () => {
+    const { pokemonCardTemplate: card } = await withTemplates();
+    const html = card(pokemon, ["Resists Fire.", "Hits Rock."]);
+    expect(html).toContain("pokemon-card--recommended");
+    expect(html).toContain("Recommended");
+    expect(html).toContain('data-note="Resists Fire. Hits Rock."');
+  });
+
+  test("a normal card has no badge", async () => {
+    const { pokemonCardTemplate: card } = await withTemplates();
+    expect(card(pokemon)).not.toContain("Recommended");
+  });
+
+  test("reasons are escaped", async () => {
+    const { pokemonCardTemplate: card } = await withTemplates();
+    expect(card(pokemon, ['<b onclick="x">'])).not.toContain("<b ");
+  });
+
+  test("details show why a Pokémon was recommended", () => {
+    const html = detailsTemplate(pokemon, "", "Resists Fire.");
+    expect(html).toContain("Recommended for your team. Resists Fire.");
+    expect(detailsTemplate(pokemon, "")).not.toContain("details__note");
+  });
 });

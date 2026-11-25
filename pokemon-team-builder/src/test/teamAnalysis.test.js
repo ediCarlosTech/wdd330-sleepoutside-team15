@@ -87,4 +87,37 @@ describe("analyzeTeam", () => {
     const { suggestions } = analyzeTeam([pikachu, charmander]);
     expect(suggestions).toContain("Add 4 more to fill your team.");
   });
+
+  test("a team of three is told how many slots are left", () => {
+    const { suggestions } = analyzeTeam([pikachu, charmander], 3);
+    expect(suggestions).toContain("Add 1 more to fill your team.");
+  });
+
+  test("a full small team gets no fill-up tip", () => {
+    const { suggestions } = analyzeTeam([pikachu, charmander, charmander], 3);
+    expect(suggestions.some((tip) => tip.includes("to fill your team"))).toBe(
+      false,
+    );
+  });
+
+  test("risk scales with the team: half the team, at least two", () => {
+    const water = (members) =>
+      analyzeTeam(members).defense.find((row) => row.type === "water");
+    const bulbasaur = { types: ["grass", "poison"] };
+
+    // 2 of 4 are weak to water: half the team, so a risk
+    expect(water([charmander, charmander, pikachu, bulbasaur]).risk).toBe(true);
+    // 2 of 6 are weak and others resist: not half, so not a risk
+    const sixTeam = [
+      charmander,
+      charmander,
+      bulbasaur,
+      bulbasaur,
+      pikachu,
+      pikachu,
+    ];
+    expect(water(sixTeam).risk).toBe(false);
+    // a single weak Pokémon is never a risk
+    expect(water([charmander, bulbasaur, pikachu]).risk).toBe(false);
+  });
 });

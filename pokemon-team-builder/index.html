@@ -6,7 +6,7 @@
     <title>Pokémon Team Builder</title>
     <meta
       name="description"
-      content="Search Pokémon, see their stats and types, and build a balanced team of six."
+      content="Search Pokémon, see their stats and types, and build a balanced team of up to six, using the Pokémon you own."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -68,9 +68,26 @@
       </form>
 
       <a id="team-link" class="team-count" href="#/team"
-        ><span>Team <span id="team-count">0</span>/6</span></a
+        ><span
+          >Team <span id="team-count">0</span>/<span id="team-size-label"
+            >6</span
+          ></span
+        ></a
       >
+
+      <div class="account-bar">
+        <a id="owned-link" class="header-link" href="#/owned">My Pokémon</a>
+        <button id="login-button" class="header-button" type="button">
+          Log in
+        </button>
+        <span id="account-name" class="account-name hide" tabindex="-1"></span>
+        <button id="logout-button" class="header-button hide" type="button">
+          Log out
+        </button>
+      </div>
     </header>
+
+    <p id="site-message" class="site-message hide" role="status"></p>
 
     <main id="main" tabindex="-1">
       <section id="search-view" aria-labelledby="search-heading">
@@ -95,6 +112,10 @@
           >
             Recently viewed
           </button>
+          <label id="owned-only-label" class="check hide" for="owned-only">
+            <input id="owned-only" type="checkbox" />
+            Only my Pokémon
+          </label>
         </div>
 
         <p id="result-summary" class="summary" role="status"></p>
@@ -108,6 +129,18 @@
       <section id="team-view" class="hide" aria-labelledby="team-heading">
         <h1 id="team-heading" tabindex="-1">Your team</h1>
         <p id="team-message" class="summary" role="status"></p>
+
+        <div class="size-control">
+          <label for="team-size">Team size</label>
+          <select id="team-size">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3 (Pokémon GO Battle League)</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6 (main series)</option>
+          </select>
+        </div>
 
         <ol id="team-slots" class="slots"></ol>
 
@@ -143,6 +176,224 @@
           <div id="analysis"></div>
         </section>
       </section>
+
+      <section id="owned-view" class="hide" aria-labelledby="owned-heading">
+        <h1 id="owned-heading" tabindex="-1">My Pokémon</h1>
+
+        <div id="owned-prompt" class="owned-prompt hide">
+          <p>
+            Log in to keep a list of the Pokémon you own, with their CP, IVs and
+            moves. Team recommendations use them as a bonus, and never limit you
+            to only what you own.
+          </p>
+          <div class="owned-prompt__actions">
+            <button id="owned-login" class="button" type="button">
+              Log in
+            </button>
+            <button
+              id="owned-register"
+              class="button button--secondary"
+              type="button"
+            >
+              Create an account
+            </button>
+          </div>
+        </div>
+
+        <div id="owned-content" class="hide">
+          <form id="owned-form" class="owned-form">
+            <h2 id="owned-form-title">Add a Pokémon</h2>
+
+            <div class="field-grid">
+              <div class="field field--wide">
+                <label for="owned-species">Pokémon</label>
+                <input
+                  id="owned-species"
+                  name="species"
+                  type="text"
+                  list="species-options"
+                  required
+                  autocomplete="off"
+                  autocapitalize="none"
+                  spellcheck="false"
+                />
+                <datalist id="species-options"></datalist>
+              </div>
+              <div class="field">
+                <label for="owned-nickname">Nickname (optional)</label>
+                <input
+                  id="owned-nickname"
+                  name="nickname"
+                  type="text"
+                  maxlength="20"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="field">
+                <label for="owned-cp">CP</label>
+                <input
+                  id="owned-cp"
+                  name="cp"
+                  type="number"
+                  inputmode="numeric"
+                  min="10"
+                  max="10000"
+                  step="1"
+                />
+              </div>
+              <div class="field">
+                <label for="owned-level">Level (1 to 51)</label>
+                <input
+                  id="owned-level"
+                  name="level"
+                  type="number"
+                  inputmode="decimal"
+                  min="1"
+                  max="51"
+                  step="0.5"
+                />
+              </div>
+            </div>
+
+            <fieldset class="field-group">
+              <legend>IVs (0 to 15 each)</legend>
+              <div class="field-grid field-grid--three">
+                <div class="field">
+                  <label for="owned-iv-attack">Attack</label>
+                  <input
+                    id="owned-iv-attack"
+                    name="ivAttack"
+                    type="number"
+                    inputmode="numeric"
+                    min="0"
+                    max="15"
+                    step="1"
+                  />
+                </div>
+                <div class="field">
+                  <label for="owned-iv-defense">Defense</label>
+                  <input
+                    id="owned-iv-defense"
+                    name="ivDefense"
+                    type="number"
+                    inputmode="numeric"
+                    min="0"
+                    max="15"
+                    step="1"
+                  />
+                </div>
+                <div class="field">
+                  <label for="owned-iv-stamina">Stamina</label>
+                  <input
+                    id="owned-iv-stamina"
+                    name="ivStamina"
+                    type="number"
+                    inputmode="numeric"
+                    min="0"
+                    max="15"
+                    step="1"
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <legend>Moves</legend>
+              <div class="field-grid field-grid--three">
+                <div class="field">
+                  <label for="owned-fast">Fast move</label>
+                  <input
+                    id="owned-fast"
+                    name="fastMove"
+                    type="text"
+                    maxlength="40"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="field">
+                  <label for="owned-charged-1">Charged move 1</label>
+                  <input
+                    id="owned-charged-1"
+                    name="chargedMove1"
+                    type="text"
+                    maxlength="40"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="field">
+                  <label for="owned-charged-2">Charged move 2</label>
+                  <input
+                    id="owned-charged-2"
+                    name="chargedMove2"
+                    type="text"
+                    maxlength="40"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <legend>Special</legend>
+              <div class="checks">
+                <label class="check"
+                  ><input name="shiny" type="checkbox" /> Shiny</label
+                >
+                <label class="check"
+                  ><input name="shadow" type="checkbox" /> Shadow</label
+                >
+                <label class="check"
+                  ><input name="lucky" type="checkbox" /> Lucky</label
+                >
+              </div>
+            </fieldset>
+
+            <div class="field field--wide">
+              <label for="owned-notes">Notes (optional)</label>
+              <textarea
+                id="owned-notes"
+                name="notes"
+                rows="2"
+                maxlength="500"
+              ></textarea>
+            </div>
+
+            <p id="owned-form-message" class="form-message" role="status"></p>
+
+            <div class="form-actions">
+              <button id="owned-save" class="button" type="submit">
+                Add Pokémon
+              </button>
+              <button
+                id="owned-cancel"
+                class="button button--secondary hide"
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+
+          <h2 class="owned-heading">Your collection</h2>
+          <p id="owned-summary" class="summary" role="status" tabindex="-1"></p>
+          <ul id="owned-list" class="owned-list"></ul>
+
+          <section class="account-section" aria-labelledby="account-heading">
+            <h2 id="account-heading">Account</h2>
+            <p>
+              Deleting your account removes it and every Pokémon you track. Your
+              teams and favorites stay in this browser.
+            </p>
+            <button
+              id="delete-account"
+              class="button button--secondary"
+              type="button"
+            >
+              Delete my account
+            </button>
+          </section>
+        </div>
+      </section>
     </main>
 
     <dialog id="details-dialog" class="details" aria-label="Pokémon details">
@@ -152,6 +403,86 @@
         </button>
       </form>
       <div id="details-content" class="details__content"></div>
+    </dialog>
+
+    <dialog id="auth-dialog" class="details auth" aria-labelledby="auth-title">
+      <form method="dialog">
+        <button class="details__close" aria-label="Close">&times;</button>
+      </form>
+      <form id="auth-form" class="auth__form">
+        <h2 id="auth-title">Log in</h2>
+        <p id="auth-intro"></p>
+
+        <label for="auth-username">Username</label>
+        <input
+          id="auth-username"
+          name="username"
+          type="text"
+          required
+          maxlength="30"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+        />
+
+        <label for="auth-password">Password</label>
+        <input
+          id="auth-password"
+          name="password"
+          type="password"
+          required
+          maxlength="128"
+          autocomplete="current-password"
+          aria-describedby="auth-hint"
+        />
+        <p id="auth-hint" class="hint hide">
+          Usernames are 3 to 30 letters, numbers or underscores. Passwords need
+          at least 8 characters.
+        </p>
+
+        <p
+          id="auth-error"
+          class="form-message form-message--error"
+          role="alert"
+        ></p>
+
+        <button id="auth-submit" class="button" type="submit">Log in</button>
+        <button id="auth-toggle" class="link-button" type="button"></button>
+      </form>
+    </dialog>
+
+    <dialog
+      id="delete-dialog"
+      class="details auth"
+      aria-labelledby="delete-title"
+    >
+      <form method="dialog">
+        <button class="details__close" aria-label="Close">&times;</button>
+      </form>
+      <form id="delete-form" class="auth__form">
+        <h2 id="delete-title">Delete your account</h2>
+        <p>
+          This permanently deletes your account and every Pokémon you track. It
+          can't be undone. Enter your password to confirm.
+        </p>
+        <label for="delete-password">Password</label>
+        <input
+          id="delete-password"
+          name="password"
+          type="password"
+          required
+          maxlength="128"
+          autocomplete="current-password"
+        />
+        <p
+          id="delete-error"
+          class="form-message form-message--error"
+          role="alert"
+        ></p>
+        <button id="delete-submit" class="button button--danger" type="submit">
+          Delete my account
+        </button>
+      </form>
     </dialog>
   </body>
 </html>

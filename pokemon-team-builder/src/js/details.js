@@ -4,7 +4,6 @@ import {
   messageTemplate,
   formatName,
 } from "./renderer.js";
-import { MAX_TEAM_SIZE } from "./teamBuilder.js";
 
 // the details pop-up, built on the native <dialog> element so Escape,
 // focus trapping, and returning focus to the opener come for free
@@ -12,11 +11,13 @@ export default class PokemonDetails {
   // api: getPokemon(name), getPokemonDescription(id)
   // team: the Team class instance
   // storage: getFavorites(), setFavorites(names), addRecent(name)
-  constructor(dialogElement, { api, team, storage }) {
+  // getOwned(name): the best one the person owns, or null
+  constructor(dialogElement, { api, team, storage, getOwned = () => null }) {
     this.dialog = dialogElement;
     this.api = api;
     this.team = team;
     this.storage = storage;
+    this.getOwned = getOwned;
     this.content = dialogElement.querySelector("#details-content");
     // the Pokémon being loaded, so a slow answer for an older click is ignored
     this.currentName = null;
@@ -46,7 +47,8 @@ export default class PokemonDetails {
     });
   }
 
-  async open(name) {
+  // note: why this Pokémon is recommended, when it was opened from a pinned card
+  async open(name, note = "") {
     this.currentName = name;
     this.pokemon = null;
     this.content.innerHTML = loadingTemplate();
@@ -65,7 +67,12 @@ export default class PokemonDetails {
         return;
       }
       this.pokemon = pokemon;
-      this.content.innerHTML = detailsTemplate(pokemon, description);
+      this.content.innerHTML = detailsTemplate(
+        pokemon,
+        description,
+        note,
+        this.getOwned(name),
+      );
       this.refreshActions();
       this.storage.addRecent(name);
     } catch (err) {
@@ -92,7 +99,7 @@ export default class PokemonDetails {
       const result = this.team.add(name);
       this.say(
         result.ok
-          ? `${displayName} added to your team (${this.team.members.length} of ${MAX_TEAM_SIZE}).`
+          ? `${displayName} added to your team (${this.team.members.length} of ${this.team.maxSize}).`
           : result.message,
       );
     }

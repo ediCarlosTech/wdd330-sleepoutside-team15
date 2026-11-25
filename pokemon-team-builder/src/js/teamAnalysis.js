@@ -107,13 +107,14 @@ export function getMultiplier(attackType, defenderTypes) {
   }, 1);
 }
 
-// a type is a risk when three or more Pokémon are weak to it,
+// a type is a risk when half the team (at least two Pokémon) is weak to it,
 // or two are weak and nothing on the team resists it
-function isRisk(row) {
-  return row.weak >= 3 || (row.weak >= 2 && row.resist + row.immune === 0);
+function isRisk(row, size) {
+  const half = Math.max(2, Math.ceil(size / 2));
+  return row.weak >= half || (row.weak >= 2 && row.resist + row.immune === 0);
 }
 
-function buildSuggestions(size, defense, coverage) {
+function buildSuggestions(size, maxSize, defense, coverage) {
   if (size === 0) {
     return ["Add Pokémon to your team to get suggestions."];
   }
@@ -134,15 +135,16 @@ function buildSuggestions(size, defense, coverage) {
     );
   }
 
-  if (size < MAX_TEAM_SIZE) {
-    tips.push(`Add ${MAX_TEAM_SIZE - size} more to fill your team.`);
+  if (size < maxSize) {
+    tips.push(`Add ${maxSize - size} more to fill your team.`);
   }
 
   return tips.length > 0 ? tips : ["No big gaps found. Nice balance."];
 }
 
 // members: Pokémon objects with a types array
-export function analyzeTeam(members) {
+// maxSize: how many Pokémon the team can hold
+export function analyzeTeam(members, maxSize = MAX_TEAM_SIZE) {
   const defense = TYPES.map((attackType) => {
     const row = { type: attackType, weak: 0, resist: 0, immune: 0 };
     members.forEach((member) => {
@@ -155,7 +157,7 @@ export function analyzeTeam(members) {
         row.resist += 1;
       }
     });
-    row.risk = isRisk(row);
+    row.risk = isRisk(row, members.length);
     return row;
   });
 
@@ -171,6 +173,6 @@ export function analyzeTeam(members) {
     size: members.length,
     defense,
     coverage,
-    suggestions: buildSuggestions(members.length, defense, coverage),
+    suggestions: buildSuggestions(members.length, maxSize, defense, coverage),
   };
 }

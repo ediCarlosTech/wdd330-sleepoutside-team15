@@ -12,6 +12,8 @@ import {
   saveTeam,
   getSavedTeams,
   deleteSavedTeam,
+  getTeamSize,
+  setTeamSize,
 } from "../js/storage.js";
 
 beforeEach(() => {
@@ -84,7 +86,7 @@ test("damaged saved teams are dropped or cleaned", () => {
     ]),
   );
   expect(getSavedTeams()).toEqual([
-    { id: "1", name: "Good", members: ["a", "b"] },
+    { id: "1", name: "Good", members: ["a", "b"], size: 6 },
   ]);
 });
 
@@ -95,4 +97,28 @@ test("a browser that refuses to store gives a clear failure, not a crash", () =>
 
   expect(setTeamNames(["a"])).toBe(false);
   expect(saveTeam("Full", ["a"])).toBeNull();
+});
+
+test("team size defaults to six and survives a round trip", () => {
+  expect(getTeamSize()).toBe(6);
+  setTeamSize(3);
+  expect(getTeamSize()).toBe(3);
+});
+
+test("a damaged team size falls back to a safe value", () => {
+  localStorage.setItem("ptb-team-size", JSON.stringify("banana"));
+  expect(getTeamSize()).toBe(6);
+  localStorage.setItem("ptb-team-size", JSON.stringify(40));
+  expect(getTeamSize()).toBe(6);
+});
+
+test("saved teams remember their size, and older ones count as six", () => {
+  saveTeam("Battle League", ["a", "b", "c"], 3);
+  expect(getSavedTeams()[0].size).toBe(3);
+
+  localStorage.setItem(
+    "ptb-saved-teams",
+    JSON.stringify([{ id: "old", name: "Old", members: ["a"] }]),
+  );
+  expect(getSavedTeams()[0].size).toBe(6);
 });

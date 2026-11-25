@@ -1,7 +1,12 @@
-import Team, { MAX_TEAM_SIZE } from "../js/teamBuilder.js";
+import Team, { MAX_TEAM_SIZE, clampTeamSize } from "../js/teamBuilder.js";
 
-function makeStorage(names = []) {
-  return { getTeamNames: () => names, setTeamNames: jest.fn() };
+function makeStorage(names = [], size = 6) {
+  return {
+    getTeamNames: () => names,
+    setTeamNames: jest.fn(),
+    getTeamSize: () => size,
+    setTeamSize: jest.fn(),
+  };
 }
 
 test("a damaged stored team is cleaned: no repeats, at most six", () => {
@@ -71,4 +76,71 @@ test("listeners hear what kind of change happened", () => {
 
   expect(seen).toEqual(["add", "remove", "load", "clear"]);
   expect(team.members).toEqual([]);
+});
+
+describe("team size", () => {
+  test("clampTeamSize keeps sizes between 1 and 6 and fixes junk", () => {
+    expect(clampTeamSize(3)).toBe(3);
+    expect(clampTeamSize("4")).toBe(4);
+    expect(clampTeamSize(0)).toBe(1);
+    expect(clampTeamSize(99)).toBe(6);
+    expect(clampTeamSize(2.6)).toBe(3);
+    expect(clampTeamSize(undefined)).toBe(6);
+    expect(clampTeamSize("abc")).toBe(6);
+  });
+
+  test("a team of three refuses a fourth Pokémon and says why", () => {
+    const team = new Team(makeStorage(["a", "b", "c"], 3));
+    const result = team.add("d");
+
+    expect(team.isFull).toBe(true);
+    expect(result).toMatchObject({ ok: false, reason: "full" });
+    expect(result.message).toContain("already has 3 Pokémon");
+  });
+
+  test("a stored team larger than its size is trimmed on load", () => {
+    const team = new Team(makeStorage(["a", "b", "c", "d"], 2));
+    expect(team.members).toEqual(["a", "b"]);
+  });
+
+  test("a damaged stored size becomes six", () => {
+    const team = new Team(makeStorage([], "banana"));
+    expect(team.maxSize).toBe(6);
+  });
+
+  test("membersBeyond shows who a smaller team would drop, without dropping them", () => {
+    const team = new Team(makeStorage(["a", "b", "c", "d"]));
+    expect(team.membersBeyond(2)).toEqual(["c", "d"]);
+    expect(team.membersBeyond(6)).toEqual([]);
+    expect(team.members).toHaveLength(4);
+  });
+
+  test("setSize trims from the end, saves both values, and tells listeners", () => {
+    const storage = makeStorage(["a", "b", "c", "d"]);
+    const team = new Team(storage);
+    const seen = [];
+    team.onChange((members, change) => seen.push(change));
+
+    team.setSize(2);
+
+    expect(team.members).toEqual(["a", "b"]);
+    expect(storage.setTeamSize).toHaveBeenCalledWith(2);
+    expect(storage.setTeamNames).toHaveBeenCalledWith(["a", "b"]);
+    expect(seen).toEqual(["size"]);
+  });
+
+  test("growing the team keeps everyone and opens slots", () => {
+    const team = new Team(makeStorage(["a", "b", "c"], 3));
+    team.setSize(5);
+    expect(team.members).toHaveLength(3);
+    expect(team.isFull).toBe(false);
+    expect(team.add("d")).toEqual({ ok: true });
+  });
+
+  test("replace can set the size too, as when loading a saved team", () => {
+    const team = new Team(makeStorage([], 6));
+    team.replace(["x", "y", "z", "w"], 3);
+    expect(team.maxSize).toBe(3);
+    expect(team.members).toEqual(["x", "y", "z"]);
+  });
 });

@@ -1,7 +1,10 @@
 // Everything saved in the browser lives here. Stored data is untrusted:
 // it can be missing, edited by hand, or from an older version of the app.
+import { MAX_TEAM_SIZE, clampTeamSize } from "./teamBuilder.js";
+
 const KEYS = {
   team: "ptb-team",
+  teamSize: "ptb-team-size",
   saved: "ptb-saved-teams",
   favorites: "ptb-favorites",
   recent: "ptb-recent",
@@ -39,6 +42,10 @@ function readNames(key) {
 export const getTeamNames = () => readNames(KEYS.team);
 export const setTeamNames = (names) => write(KEYS.team, names);
 
+export const getTeamSize = () =>
+  clampTeamSize(read(KEYS.teamSize) ?? MAX_TEAM_SIZE);
+export const setTeamSize = (size) => write(KEYS.teamSize, size);
+
 export const getFavorites = () => readNames(KEYS.favorites);
 export const setFavorites = (names) => write(KEYS.favorites, names);
 
@@ -66,16 +73,19 @@ export function getSavedTeams() {
     .map((team) => ({
       ...team,
       members: team.members.filter((item) => typeof item === "string"),
+      // teams saved before sizes existed were all for six
+      size: clampTeamSize(team.size ?? MAX_TEAM_SIZE),
     }));
 }
 
 // saving under a name that already exists replaces that team
 // returns the saved team, or null if the browser refused to store it
-export function saveTeam(name, members) {
+export function saveTeam(name, members, size = MAX_TEAM_SIZE) {
   const team = {
     id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
     name,
     members: [...members],
+    size: clampTeamSize(size),
     savedAt: new Date().toISOString(),
   };
   const others = getSavedTeams().filter(

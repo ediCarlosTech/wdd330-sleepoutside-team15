@@ -1,22 +1,37 @@
 import { formatName } from "./renderer.js";
 
+// The biggest team the app allows. Main-series teams have 6; Pokémon GO
+// Battle League teams have 3, so the size can be lowered (never below 1).
 export const MAX_TEAM_SIZE = 6;
+export const MIN_TEAM_SIZE = 1;
 
-function uniqueNames(names) {
-  return [...new Set(names)].slice(0, MAX_TEAM_SIZE);
+// any value becomes a whole number from 1 to 6, and junk becomes 6
+export function clampTeamSize(value) {
+  const size = Math.round(Number(value));
+  if (!Number.isFinite(size)) {
+    return MAX_TEAM_SIZE;
+  }
+  return Math.min(MAX_TEAM_SIZE, Math.max(MIN_TEAM_SIZE, size));
 }
 
-// The current team: up to six different Pokémon, kept in storage.
-// storage is anything with getTeamNames() and setTeamNames(names)
+function uniqueNames(names, limit) {
+  return [...new Set(names)].slice(0, limit);
+}
+
+// The current team: different Pokémon, up to the chosen size, kept in storage.
+// storage is anything with getTeamNames(), setTeamNames(names),
+// getTeamSize(), and setTeamSize(size)
 export default class Team {
   constructor(storage) {
     this.storage = storage;
     // stored data may be damaged, so clean it before trusting it
-    this.members = uniqueNames(storage.getTeamNames());
+    this.maxSize = clampTeamSize(storage.getTeamSize());
+    this.members = uniqueNames(storage.getTeamNames(), this.maxSize);
     this.listeners = [];
   }
 
-  // the callback gets (members, change) where change is "add", "remove", "load", or "clear"
+  // the callback gets (members, change) where change is
+  // "add", "remove", "load", "clear", or "size"
   onChange(listener) {
     this.listeners.push(listener);
   }
@@ -26,7 +41,7 @@ export default class Team {
   }
 
   get isFull() {
-    return this.members.length >= MAX_TEAM_SIZE;
+    return this.members.length >= this.maxSize;
   }
 
   add(name) {
@@ -41,7 +56,7 @@ export default class Team {
       return {
         ok: false,
         reason: "full",
-        message: `Your team already has ${MAX_TEAM_SIZE} Pokémon. Remove one to add ${formatName(name)}.`,
+        message: `Your team already has ${this.maxSize} Pokémon. Remove one to add ${formatName(name)}.`,
       };
     }
     this.members.push(name);
@@ -56,9 +71,22 @@ export default class Team {
     }
   }
 
-  // swap in a whole team, for example a saved one
-  replace(names) {
-    this.members = uniqueNames(names);
+  // who would be dropped if the team were made this size
+  membersBeyond(size) {
+    return this.members.slice(clampTeamSize(size));
+  }
+
+  // a smaller team drops the Pokémon from the end, so ask first (see membersBeyond)
+  setSize(size) {
+    this.maxSize = clampTeamSize(size);
+    this.members = this.members.slice(0, this.maxSize);
+    this.commit("size");
+  }
+
+  // swap in a whole team, for example a saved one, and its size
+  replace(names, size = this.maxSize) {
+    this.maxSize = clampTeamSize(size);
+    this.members = uniqueNames(names, this.maxSize);
     this.commit("load");
   }
 
@@ -68,6 +96,7 @@ export default class Team {
   }
 
   commit(change) {
+    this.storage.setTeamSize(this.maxSize);
     this.storage.setTeamNames(this.members);
     this.listeners.forEach((listener) => listener(this.members, change));
   }

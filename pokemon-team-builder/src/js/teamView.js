@@ -4,12 +4,12 @@ import {
   unavailableSlotTemplate,
   savedTeamsTemplate,
   analysisTemplate,
+  formatName,
 } from "./renderer.js";
 import { analyzeTeam } from "./teamAnalysis.js";
-import { MAX_TEAM_SIZE } from "./teamBuilder.js";
 import { prefersReducedMotion } from "./animations.js";
 
-// The team page: six slots, saving and loading, and the team report.
+// The team page: the slots, saving and loading, and the team report.
 // team: Team instance; api: getPokemon(name); storage: saved-teams functions
 // getGif: (query) => Promise of a gif or null; openDetails: (name) => void
 export default class TeamView {
@@ -25,6 +25,7 @@ export default class TeamView {
     this.saved = document.querySelector("#saved-teams");
     this.reaction = document.querySelector("#reaction");
     this.nameInput = document.querySelector("#team-name");
+    this.sizeSelect = document.querySelector("#team-size");
     // bumped on every draw so an older, slower draw never overwrites a newer one
     this.drawCount = 0;
   }
@@ -39,6 +40,8 @@ export default class TeamView {
         this.openDetails(open.dataset.name);
       }
     });
+
+    this.sizeSelect.addEventListener("change", () => this.changeSize());
 
     document
       .querySelector("#team-save-form")
@@ -69,6 +72,24 @@ export default class TeamView {
     this.message.textContent = text;
   }
 
+  // a smaller team drops Pokémon from the end, so check before doing it
+  changeSize() {
+    const size = Number(this.sizeSelect.value);
+    const dropped = this.team.membersBeyond(size);
+
+    if (
+      dropped.length > 0 &&
+      !window.confirm(
+        `A team of ${size} removes ${dropped.map(formatName).join(", ")}. Continue?`,
+      )
+    ) {
+      this.sizeSelect.value = String(this.team.maxSize);
+      return;
+    }
+    this.team.setSize(size);
+    this.say(`Team size set to ${size}.`);
+  }
+
   saveCurrentTeam() {
     const name = this.nameInput.value.trim();
     if (this.team.members.length === 0) {
@@ -81,7 +102,7 @@ export default class TeamView {
       return;
     }
 
-    if (this.storage.saveTeam(name, this.team.members)) {
+    if (this.storage.saveTeam(name, this.team.members, this.team.maxSize)) {
       this.say(`Saved "${name}". Saving with the same name again replaces it.`);
       this.nameInput.value = "";
       this.drawSaved();
@@ -107,7 +128,7 @@ export default class TeamView {
       ) {
         return;
       }
-      this.team.replace(saved.members);
+      this.team.replace(saved.members, saved.size);
       this.say(`Loaded "${saved.name}".`);
     } else if (action === "delete") {
       if (window.confirm(`Delete the saved team "${saved.name}"?`)) {
@@ -127,7 +148,9 @@ export default class TeamView {
     this.drawCount += 1;
     const draw = this.drawCount;
     const names = this.team.members;
+    const { maxSize } = this.team;
 
+    this.sizeSelect.value = String(maxSize);
     this.drawSaved();
 
     // allSettled: one Pokémon that fails to load should not hide the others
@@ -142,7 +165,7 @@ export default class TeamView {
     );
 
     const slotHtml = [];
-    for (let index = 0; index < MAX_TEAM_SIZE; index += 1) {
+    for (let index = 0; index < maxSize; index += 1) {
       if (!names[index]) {
         slotHtml.push(emptySlotTemplate(index));
       } else if (loaded[index]) {
@@ -159,7 +182,7 @@ export default class TeamView {
     }
 
     const members = loaded.filter(Boolean);
-    this.analysis.innerHTML = analysisTemplate(analyzeTeam(members));
+    this.analysis.innerHTML = analysisTemplate(analyzeTeam(members, maxSize));
     this.drawReaction(names);
   }
 
@@ -172,10 +195,9 @@ export default class TeamView {
       return;
     }
 
-    const query =
-      names.length >= MAX_TEAM_SIZE
-        ? "pokemon celebration"
-        : `${names[names.length - 1]} pokemon`;
+    const query = this.team.isFull
+      ? "pokemon celebration"
+      : `${names[names.length - 1]} pokemon`;
 
     let gif = null;
     try {
