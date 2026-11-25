@@ -230,7 +230,26 @@ function coverageGroupTemplate(id, title, entries) {
 </section>`;
 }
 
+// The weaknesses and resistances table, which sits under the matchup diagram.
 // analysis comes from analyzeTeam()
+export function weaknessesTemplate(analysis) {
+  if (analysis.size === 0) {
+    return messageTemplate(
+      "Add Pokémon to your team to see its weaknesses and resistances.",
+    );
+  }
+  return `<p class="note">Hover over a type for a moment, or select it, to see which of your Pokémon are weak to it or resist it.</p>
+<div class="matchups-wrap">
+<table class="matchups">
+  <caption class="visually-hidden">Pokémon on your team that are weak to, resist, or are immune to each attacking type</caption>
+  <thead><tr><th scope="col">Attacking type</th><th scope="col">Weak</th><th scope="col">Resist</th><th scope="col">Immune</th></tr></thead>
+  <tbody>${analysis.defense.map(defenseRowTemplate).join("")}</tbody>
+</table>
+<div id="matchup-popover" class="matchup-popover hide" role="region" aria-label="Pokémon affected by this type" tabindex="-1"></div>
+</div>`;
+}
+
+// suggestions and type coverage. analysis comes from analyzeTeam()
 export function analysisTemplate(analysis) {
   if (analysis.size === 0) {
     return messageTemplate("Add Pokémon to your team to see its report.");
@@ -242,16 +261,6 @@ export function analysisTemplate(analysis) {
 
   return `<h3>Suggestions</h3>
 <ul class="tips">${tips}</ul>
-<h3>Weaknesses and resistances</h3>
-<p class="note">Hover over a type for a moment, or select it, to see which of your Pokémon are weak to it or resist it.</p>
-<div class="matchups-wrap">
-<table class="matchups">
-  <caption class="visually-hidden">Pokémon on your team that are weak to, resist, or are immune to each attacking type</caption>
-  <thead><tr><th scope="col">Attacking type</th><th scope="col">Weak</th><th scope="col">Resist</th><th scope="col">Immune</th></tr></thead>
-  <tbody>${analysis.defense.map(defenseRowTemplate).join("")}</tbody>
-</table>
-<div id="matchup-popover" class="matchup-popover hide" role="region" aria-label="Pokémon affected by this type" tabindex="-1"></div>
-</div>
 <h3>Type coverage</h3>
 <p class="note">Based on your Pokémon's types only. Moves can cover more.</p>
 <div class="coverage-groups">

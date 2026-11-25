@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import MatchupDrill, { HOVER_DELAY_MS } from "../js/matchupDrill.js";
-import { analysisTemplate } from "../js/renderer.js";
+import { weaknessesTemplate } from "../js/renderer.js";
 import { analyzeTeam } from "../js/teamAnalysis.js";
 
 const charmander = { name: "charmander", types: ["fire"] };
@@ -24,14 +24,14 @@ const isOpen = () => !panel().classList.contains("hide");
 
 function draw() {
   analysis = analyzeTeam([charmander, bulbasaur]);
-  container.innerHTML = analysisTemplate(analysis);
+  container.innerHTML = weaknessesTemplate(analysis);
   drill.setRows(analysis.defense);
 }
 
 beforeEach(() => {
   jest.useFakeTimers();
-  document.body.innerHTML = '<div id="analysis"></div><p id="elsewhere"></p>';
-  container = document.querySelector("#analysis");
+  document.body.innerHTML = '<div id="matchups"></div><p id="elsewhere"></p>';
+  container = document.querySelector("#matchups");
   openDetails = jest.fn();
   drill = new MatchupDrill(container, { openDetails });
   drill.init();

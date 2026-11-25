@@ -80,7 +80,16 @@ describe("team templates", () => {
     expect(savedTeamsTemplate([])).toContain("No saved teams yet");
   });
 
-  test("the report marks risky types in words, not only color", async () => {
+  test("the weaknesses table marks risky types in words, not only color", async () => {
+    const { weaknessesTemplate } = await withTemplates();
+    const html = weaknessesTemplate({
+      size: 3,
+      defense: [{ type: "water", weak: 3, resist: 0, immune: 0, risk: true }],
+    });
+    expect(html).toContain("3 (risk)");
+  });
+
+  test("the report shows suggestions and coverage, but no weaknesses table", async () => {
     const { analysisTemplate } = await withTemplates();
     const html = analysisTemplate({
       size: 3,
@@ -88,9 +97,10 @@ describe("team templates", () => {
       defense: [{ type: "water", weak: 3, resist: 0, immune: 0, risk: true }],
       coverage: [{ type: "fire", covered: false }],
     });
-    expect(html).toContain("3 (risk)");
-    expect(html).toContain("Not covered");
     expect(html).toContain("Tip one.");
+    expect(html).toContain("Not covered");
+    expect(html).not.toContain("matchups");
+    expect(html).not.toContain("Weaknesses and resistances");
   });
 
   test("coverage is grouped into Covered and Not covered, with counts", async () => {
@@ -138,6 +148,13 @@ describe("team templates", () => {
   test("an empty team shows a prompt instead of a report", async () => {
     const { analysisTemplate } = await withTemplates();
     expect(analysisTemplate({ size: 0 })).toContain("Add Pokémon to your team");
+  });
+
+  test("with no team the weaknesses area asks for one too", async () => {
+    const { weaknessesTemplate } = await withTemplates();
+    const html = weaknessesTemplate({ size: 0 });
+    expect(html).toContain("Add Pokémon to your team");
+    expect(html).not.toContain("<table");
   });
 
   test("details include team and favorite buttons", () => {

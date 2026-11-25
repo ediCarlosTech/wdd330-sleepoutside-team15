@@ -4,6 +4,7 @@ import {
   unavailableSlotTemplate,
   savedTeamsTemplate,
   analysisTemplate,
+  weaknessesTemplate,
   formatName,
 } from "./renderer.js";
 import { analyzeTeam } from "./teamAnalysis.js";
@@ -28,7 +29,9 @@ export default class TeamView {
       ring: document.querySelector("#diagram-ring"),
       readout: document.querySelector("#diagram-readout"),
     });
-    this.drill = new MatchupDrill(this.analysis, { openDetails });
+    // the weaknesses table lives under the matchup diagram, not in the report
+    this.matchups = document.querySelector("#matchups");
+    this.drill = new MatchupDrill(this.matchups, { openDetails });
     this.saved = document.querySelector("#saved-teams");
     this.reaction = document.querySelector("#reaction");
     this.nameInput = document.querySelector("#team-name");
@@ -193,6 +196,7 @@ export default class TeamView {
     const members = loaded.filter(Boolean);
     const analysis = analyzeTeam(members, maxSize);
     this.analysis.innerHTML = analysisTemplate(analysis);
+    this.matchups.innerHTML = weaknessesTemplate(analysis);
     this.drill.setRows(analysis.defense);
     this.diagram.render(
       members.map((member) => member.types),
