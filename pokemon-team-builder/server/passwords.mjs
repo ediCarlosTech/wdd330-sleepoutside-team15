@@ -3,6 +3,10 @@ import { promisify } from "node:util";
 
 const scryptAsync = promisify(scrypt);
 
+// Stored in place of a hash for accounts made with Google sign-in. It is not a
+// valid hash, so no password can ever match it.
+export const NO_PASSWORD = "!";
+
 // scrypt settings (OWASP lists N=2^15, r=8, p=3 as a safe minimum).
 // They are stored with each hash, so they can be raised later without
 // locking anyone out.

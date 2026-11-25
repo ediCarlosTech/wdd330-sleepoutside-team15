@@ -53,6 +53,8 @@
         <span>Team Builder</span>
       </a>
 
+      <a id="home-link" class="button home-link hide" href="#/search">Home</a>
+
       <form id="search-form" class="search" role="search">
         <label class="visually-hidden" for="search-input"
           >Pokémon name or number</label
@@ -174,6 +176,34 @@
           <h2 id="analysis-heading">Team report</h2>
           <figure id="reaction" class="reaction hide"></figure>
           <div id="analysis"></div>
+        </section>
+
+        <section aria-labelledby="diagram-heading">
+          <h2 id="diagram-heading">Type matchup diagram</h2>
+          <ul class="diagram-legend">
+            <li>
+              <span class="diagram__key diagram__key--covered">✓</span> covered:
+              a type on your team hits it super effectively
+            </li>
+            <li>
+              <span class="diagram__key diagram__key--uncovered">✗</span> not
+              covered
+            </li>
+            <li>
+              <span class="diagram__key diagram__key--team">Outlined</span> a
+              type on your team
+            </li>
+            <li>
+              <span class="diagram__key diagram__key--out">→</span> hits super
+              effectively
+            </li>
+            <li>
+              <span class="diagram__key diagram__key--in">⇢</span> is hit super
+              effectively by (when a type is selected)
+            </li>
+          </ul>
+          <div id="diagram-ring" class="diagram"></div>
+          <div id="diagram-readout" class="diagram-readout" role="status"></div>
         </section>
       </section>
 
@@ -378,6 +408,16 @@
           <p id="owned-summary" class="summary" role="status" tabindex="-1"></p>
           <ul id="owned-list" class="owned-list"></ul>
 
+          <section
+            id="google-section"
+            class="account-section hide"
+            aria-labelledby="google-heading"
+          >
+            <h2 id="google-heading">Google sign-in</h2>
+            <p id="google-status"></p>
+            <div id="google-connect" class="auth__google-button"></div>
+          </section>
+
           <section class="account-section" aria-labelledby="account-heading">
             <h2 id="account-heading">Account</h2>
             <p>
@@ -448,6 +488,12 @@
 
         <button id="auth-submit" class="button" type="submit">Log in</button>
         <button id="auth-toggle" class="link-button" type="button"></button>
+
+        <!-- shown only when the server has Google sign-in set up -->
+        <div id="auth-google-section" class="auth__google hide">
+          <p class="auth__or">or</p>
+          <div id="auth-google" class="auth__google-button"></div>
+        </div>
       </form>
     </dialog>
 
@@ -463,17 +509,47 @@
         <h2 id="delete-title">Delete your account</h2>
         <p>
           This permanently deletes your account and every Pokémon you track. It
-          can't be undone. Enter your password to confirm.
+          can't be undone.
+          <span id="delete-instruction">Enter your password to confirm.</span>
         </p>
-        <label for="delete-password">Password</label>
+        <!-- Password managers want a username beside every password field. This
+             one is filled with the current username and is not meant for typing. -->
         <input
-          id="delete-password"
-          name="password"
-          type="password"
-          required
-          maxlength="128"
-          autocomplete="current-password"
+          id="delete-username"
+          class="visually-hidden"
+          name="username"
+          type="text"
+          autocomplete="username"
+          tabindex="-1"
+          aria-hidden="true"
+          readonly
         />
+        <div id="delete-password-field" class="auth__field">
+          <label for="delete-password">Password</label>
+          <input
+            id="delete-password"
+            name="password"
+            type="password"
+            required
+            maxlength="128"
+            autocomplete="current-password"
+          />
+        </div>
+        <!-- accounts that sign in only with Google have no password to type -->
+        <div id="delete-confirm-field" class="auth__field hide">
+          <label for="delete-confirm">Type your username to confirm</label>
+          <input
+            id="delete-confirm"
+            name="confirm"
+            type="text"
+            required
+            maxlength="30"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            disabled
+          />
+        </div>
         <p
           id="delete-error"
           class="form-message form-message--error"

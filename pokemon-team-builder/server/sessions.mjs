@@ -1,8 +1,20 @@
 import { createHash, randomBytes } from "node:crypto";
+import { NO_PASSWORD } from "./passwords.mjs";
 
 export const SESSION_COOKIE = "ptb_session";
 export const SESSION_DAYS = 30;
 const SESSION_MS = SESSION_DAYS * 24 * 60 * 60 * 1000;
+
+// What the browser may know about a person: no hashes, just facts it can use.
+// row needs id, username, password_hash and google_sub.
+export function toUser(row) {
+  return {
+    id: row.id,
+    username: row.username,
+    hasPassword: row.password_hash !== NO_PASSWORD,
+    googleLinked: Boolean(row.google_sub),
+  };
+}
 
 // the database holds this hash, never the token the browser holds
 function hashToken(token) {
@@ -25,7 +37,8 @@ export function findSessionUser(db, token, now = Date.now()) {
   }
   const row = db
     .prepare(
-      `SELECT users.id, users.username, sessions.expires_at
+      `SELECT users.id, users.username, users.password_hash, users.google_sub,
+              sessions.expires_at
        FROM sessions JOIN users ON users.id = sessions.user_id
        WHERE sessions.token_hash = ?`,
     )
@@ -38,7 +51,7 @@ export function findSessionUser(db, token, now = Date.now()) {
     deleteSession(db, token);
     return null;
   }
-  return { id: row.id, username: row.username };
+  return toUser(row);
 }
 
 export function deleteSession(db, token) {

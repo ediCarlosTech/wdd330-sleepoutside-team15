@@ -25,6 +25,10 @@ export default class OwnedView {
     this.list = document.querySelector("#owned-list");
     this.speciesInput = document.querySelector("#owned-species");
     this.options = document.querySelector("#species-options");
+    this.googleSection = document.querySelector("#google-section");
+    this.googleStatus = document.querySelector("#google-status");
+    this.googleConnect = document.querySelector("#google-connect");
+    this.googleDrawn = false;
 
     // the id being edited, or null when adding
     this.editingId = null;
@@ -86,6 +90,30 @@ export default class OwnedView {
     }
     this.loadSpeciesNames();
     this.renderList();
+    this.renderGoogle();
+  }
+
+  // Under Account: whether Google is connected, or a button to connect it.
+  // Hidden entirely when the server has no Google sign-in.
+  renderGoogle() {
+    const { googleClientId, user } = this.account;
+    const connected = Boolean(user?.googleLinked);
+    this.googleSection.classList.toggle("hide", !googleClientId);
+    this.googleConnect.classList.toggle("hide", connected);
+
+    if (!googleClientId) {
+      return;
+    }
+    this.googleStatus.textContent = connected
+      ? "Google is connected. You can sign in with it instead of a password."
+      : "Connect a Google account to sign in with it next time. We only keep Google's private ID for you, never your email.";
+
+    if (!connected && !this.googleDrawn) {
+      this.googleDrawn = true;
+      this.auth.drawGoogle(this.googleConnect).then((drawn) => {
+        this.googleDrawn = drawn;
+      });
+    }
   }
 
   renderList() {

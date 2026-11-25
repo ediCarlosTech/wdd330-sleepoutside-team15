@@ -31,6 +31,18 @@ export function validateCredentials(body, { creating }) {
   return { value: { username, password } };
 }
 
+// A valid username built from a name or email start, such as "José" -> "Jose".
+// suffix is added to make it unique, like "_4821".
+export function suggestUsername(hint, suffix = "") {
+  const base = String(hint ?? "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^A-Za-z0-9_]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 22);
+  return `${base.length >= 3 ? base : "trainer"}${suffix}`;
+}
+
 function optionalText(value, label, maxLength) {
   if (value === undefined || value === null || value === "") {
     return { value: null };

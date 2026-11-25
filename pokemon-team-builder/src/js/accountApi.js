@@ -1,11 +1,12 @@
 // Talks to the account server. Every function resolves to
-//   { ok: true, data }  or  { ok: false, status, error }
+//   { ok: true, status, data }  or  { ok: false, status, error }
 // and never throws, so callers only need to check `ok`.
 // The browser sends the login cookie by itself; this code never sees it.
 
 const NETWORK_ERROR =
   "We couldn't reach the server. Check your connection and try again.";
-const UNAVAILABLE_ERROR = "Accounts aren't available right now.";
+const UNAVAILABLE_ERROR =
+  "Accounts aren't available right now. The site couldn't reach its account server.";
 
 async function request(method, path, body) {
   let response;
@@ -37,7 +38,7 @@ async function request(method, path, body) {
       error: data?.error ?? "Something went wrong. Try again.",
     };
   }
-  return { ok: true, data };
+  return { ok: true, status: response.status, data };
 }
 
 export const getSession = () => request("GET", "/auth/me");
@@ -46,8 +47,13 @@ export const register = (username, password) =>
 export const login = (username, password) =>
   request("POST", "/auth/login", { username, password });
 export const logout = () => request("POST", "/auth/logout", {});
-export const deleteAccount = (password) =>
-  request("DELETE", "/account", { password });
+// proof is { password } for a password account, or { confirm } (the username
+// typed out) for an account that signs in only with Google
+export const deleteAccount = (proof) => request("DELETE", "/account", proof);
+
+export const getConfig = () => request("GET", "/config");
+export const googleSignIn = (credential, link = false) =>
+  request("POST", "/auth/google", link ? { credential, link } : { credential });
 
 export const listOwned = () => request("GET", "/owned");
 export const addOwned = (body) => request("POST", "/owned", body);

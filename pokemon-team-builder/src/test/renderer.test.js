@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
   escapeHtml,
   formatName,
@@ -88,6 +91,48 @@ describe("team templates", () => {
     expect(html).toContain("3 (risk)");
     expect(html).toContain("Not covered");
     expect(html).toContain("Tip one.");
+  });
+
+  test("coverage is grouped into Covered and Not covered, with counts", async () => {
+    const { analysisTemplate } = await withTemplates();
+    const holder = document.createElement("div");
+    holder.innerHTML = analysisTemplate({
+      size: 1,
+      suggestions: [],
+      defense: [],
+      coverage: [
+        { type: "water", covered: true },
+        { type: "grass", covered: true },
+        { type: "fire", covered: false },
+      ],
+    });
+    const group = (id) =>
+      holder.querySelector(`section[aria-labelledby="${id}"]`);
+    const names = (id) =>
+      [...group(id).querySelectorAll(".type-badge")].map((badge) =>
+        badge.textContent.trim(),
+      );
+
+    expect(group("covered-heading").querySelector("h4").textContent).toBe(
+      "Covered (2)",
+    );
+    expect(names("covered-heading")).toEqual(["Water", "Grass"]);
+    expect(group("uncovered-heading").querySelector("h4").textContent).toBe(
+      "Not covered (1)",
+    );
+    expect(names("uncovered-heading")).toEqual(["Fire"]);
+  });
+
+  test("an empty coverage group says None", async () => {
+    const { analysisTemplate } = await withTemplates();
+    const html = analysisTemplate({
+      size: 1,
+      suggestions: [],
+      defense: [],
+      coverage: [{ type: "fire", covered: false }],
+    });
+    expect(html).toContain("Covered (0)");
+    expect(html).toContain("None");
   });
 
   test("an empty team shows a prompt instead of a report", async () => {

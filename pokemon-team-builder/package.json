@@ -6,12 +6,11 @@
   "scripts": {
     "start": "vite",
     "build": "vite build --emptyOutDir",
-    "lint": "eslint \"src/**/*.js\" \"server/**/*.mjs\" vite.config.js",
+    "lint": "eslint \"src/**/*.js\" \"server/**/*.mjs\" vite.config.mjs",
     "format": "prettier --ignore-path ./.gitignore --write \"./**/*.{html,json,js,css,md}\"",
     "test": "jest --roots src/test && npm run test:server",
     "test:server": "node --test \"server/test/*.test.mjs\"",
-    "server": "node server/index.mjs",
-    "server:dev": "node --watch server/index.mjs"
+    "server": "node server/index.mjs"
   },
   "babel": {
     "presets": [

@@ -858,6 +858,39 @@ main:focus {
   font-size: 0.875rem;
 }
 
+/* a label with its input, so two of them can swap places */
+.auth__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+}
+
+.auth__field.hide {
+  display: none;
+}
+
+/* "or" divider and Google's button (Google draws the button itself) */
+.auth__or {
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+  margin: var(--space) 0;
+  color: var(--grey-700, #555);
+  font-size: 0.875rem;
+}
+
+.auth__or::before,
+.auth__or::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--grey-300);
+}
+
+.auth__google-button {
+  min-height: 44px;
+  margin-top: var(--space);
+}
+
 .form-message {
   min-height: 1.5em;
 }
@@ -1045,4 +1078,289 @@ main:focus {
 .header-link.hide,
 .check.hide {
   display: none;
+}
+
+/* Home button that replaces the search bar on the other pages */
+.home-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.home-link.hide,
+.search.hide {
+  display: none;
+}
+
+/* weakness table drill-through */
+.matchups-wrap {
+  position: relative;
+}
+
+.matchups tbody tr:hover,
+.matchups tbody tr:focus-within {
+  background: var(--grey-100);
+}
+
+.matchup__toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.matchup__toggle[aria-expanded="true"] .type-badge {
+  outline: 3px solid var(--blue-dark);
+  outline-offset: 2px;
+}
+
+.matchup-popover {
+  position: absolute;
+  left: 0;
+  z-index: 5;
+  width: min(100%, 360px);
+  padding: calc(var(--space) * 2);
+  border: 2px solid var(--blue-dark);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.matchup-popover h4 {
+  margin-top: var(--space);
+  font-family: var(--font-headline);
+  font-size: 0.9375rem;
+}
+
+.matchup-popover ul {
+  list-style: none;
+}
+
+.matchup-popover li {
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+}
+
+.matchup-popover__pokemon {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue-dark);
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.matchup-popover__hint {
+  margin-top: var(--space);
+  font-size: 0.8125rem;
+}
+
+/* type matchup diagram */
+.diagram-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space) calc(var(--space) * 3);
+  margin-bottom: var(--space);
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.diagram-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+}
+
+.diagram__key {
+  display: inline-block;
+  min-width: 2.5em;
+  padding: 2px var(--space);
+  border-radius: 999px;
+  background: var(--white);
+  text-align: center;
+  font-weight: 700;
+}
+
+.diagram__key--covered {
+  border: 2px solid #14501f;
+  color: #14501f;
+}
+
+.diagram__key--uncovered {
+  border: 2px dashed #7a1616;
+  color: #7a1616;
+}
+
+.diagram__key--team {
+  box-shadow: 0 0 0 3px var(--blue-dark);
+}
+
+.diagram__key--out {
+  color: #14501f;
+}
+
+.diagram__key--in {
+  color: #7a1616;
+}
+
+/* a square that holds the ring; the labels are placed on it in percent */
+.diagram {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.diagram__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.diagram__line {
+  fill: none;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.diagram__line--team {
+  stroke: var(--blue-dark);
+  opacity: 0.55;
+}
+
+.diagram__line--out {
+  stroke: #14501f;
+  stroke-width: 2.5;
+}
+
+.diagram__line--in {
+  stroke: #7a1616;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+}
+
+.diagram__arrow--team path {
+  fill: var(--blue-dark);
+}
+
+.diagram__arrow--out path {
+  fill: #14501f;
+}
+
+.diagram__arrow--in path {
+  fill: #7a1616;
+}
+
+.diagram__node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: 1.75rem;
+  padding: 2px 4px;
+  border: 2px solid transparent;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+/* a dashed edge and a symbol mark the types nothing on the team hits well */
+.diagram__node--covered {
+  border-color: #14501f;
+}
+
+.diagram__node--uncovered {
+  border: 2px dashed #7a1616;
+}
+
+.diagram__node--team {
+  box-shadow: 0 0 0 3px var(--blue-dark);
+}
+
+.diagram__node--selected {
+  outline: 3px solid var(--dark);
+  outline-offset: 3px;
+}
+
+.diagram__node:focus-visible {
+  outline: 3px solid var(--dark);
+  outline-offset: 3px;
+}
+
+.diagram__mark {
+  font-weight: 700;
+}
+
+/* narrow screens show three letters; the full name stays for screen readers */
+.diagram__full {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.diagram-readout {
+  max-width: 40rem;
+  margin: calc(var(--space) * 2) auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+}
+
+.diagram-readout .type-badge {
+  display: inline-block;
+}
+
+@media (min-width: 560px) {
+  .diagram__node {
+    min-width: 2.5rem;
+    min-height: 2rem;
+    padding: 2px 6px;
+    gap: 2px;
+    font-size: 0.8125rem;
+  }
+
+  .diagram__full {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+
+  .diagram__short {
+    display: none;
+  }
+}
+
+/* Type coverage: covered and not covered, side by side when there is room */
+.coverage-groups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: calc(var(--space) * 2);
+}
+
+.coverage-group h4 {
+  margin-bottom: var(--space);
+}
+
+@media (min-width: 560px) {
+  .coverage-groups {
+    grid-template-columns: 1fr 1fr;
+  }
 }

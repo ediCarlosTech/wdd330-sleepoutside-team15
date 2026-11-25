@@ -164,19 +164,70 @@ export function savedTeamsTemplate(teams) {
     .join("");
 }
 
+function typeBadgeTemplate(type) {
+  const safe = escapeHtml(type);
+  return `<span class="type-badge type-${safe}">${escapeHtml(formatName(type))}</span>`;
+}
+
+// 4 -> "4×", 0.5 -> "½×", 0 -> "Immune"
+export function formatMultiplier(multiplier) {
+  const labels = { 0: "Immune", 0.25: "¼×", 0.5: "½×", 2: "2×", 4: "4×" };
+  return labels[multiplier] ?? `${multiplier}×`;
+}
+
 function defenseRowTemplate(row) {
-  const type = escapeHtml(row.type);
   const weak = row.risk ? `${row.weak} (risk)` : row.weak;
-  return `<tr${row.risk ? ' class="matchups__risk"' : ""}>
-  <th scope="row"><span class="type-badge type-${type}">${escapeHtml(formatName(row.type))}</span></th>
+  // a type that changes nothing for this team has nobody to drill into
+  const badge =
+    (row.affected ?? []).length > 0
+      ? `<button type="button" class="matchup__toggle" aria-expanded="false" aria-controls="matchup-popover" data-type="${escapeHtml(row.type)}">${typeBadgeTemplate(row.type)}<span class="visually-hidden"> – show which Pokémon</span></button>`
+      : typeBadgeTemplate(row.type);
+  return `<tr data-type="${escapeHtml(row.type)}"${row.risk ? ' class="matchups__risk"' : ""}>
+  <th scope="row">${badge}</th>
   <td>${weak}</td><td>${row.resist}</td><td>${row.immune}</td>
 </tr>`;
 }
 
+function popoverGroupTemplate(title, entries) {
+  if (entries.length === 0) {
+    return "";
+  }
+  const items = entries
+    .map(
+      (entry) =>
+        `<li><button type="button" class="matchup-popover__pokemon" data-name="${escapeHtml(entry.name)}">${escapeHtml(formatName(entry.name))}</button> <span>${formatMultiplier(entry.multiplier)}</span></li>`,
+    )
+    .join("");
+  return `<h4>${title}</h4><ul>${items}</ul>`;
+}
+
+// the panel under a row: your Pokémon that are weak, resist, or are immune
+export function matchupPopoverTemplate(row) {
+  const weak = row.affected.filter((entry) => entry.multiplier > 1);
+  const resist = row.affected.filter(
+    (entry) => entry.multiplier < 1 && entry.multiplier > 0,
+  );
+  const immune = row.affected.filter((entry) => entry.multiplier === 0);
+  return `<p class="matchup-popover__title">${typeBadgeTemplate(row.type)} attacks hit your team like this:</p>
+${popoverGroupTemplate("Weak", weak)}${popoverGroupTemplate("Resist", resist)}${popoverGroupTemplate("Immune", immune)}
+<p class="matchup-popover__hint">Select a name for its details. Press Escape to close.</p>`;
+}
+
 function coverageItemTemplate(entry) {
   const type = escapeHtml(entry.type);
-  return `<li><span class="type-badge type-${type}">${escapeHtml(formatName(entry.type))}</span>
-  <span>${entry.covered ? "Covered" : "Not covered"}</span></li>`;
+  return `<li><span class="type-badge type-${type}">${escapeHtml(formatName(entry.type))}</span></li>`;
+}
+
+// one labeled group: the heading says which kind, so the badges need no label
+function coverageGroupTemplate(id, title, entries) {
+  const body =
+    entries.length > 0
+      ? `<ul class="coverage">${entries.map(coverageItemTemplate).join("")}</ul>`
+      : '<p class="coverage__none">None</p>';
+  return `<section class="coverage-group" aria-labelledby="${id}">
+  <h4 id="${id}">${title} (${entries.length})</h4>
+  ${body}
+</section>`;
 }
 
 // analysis comes from analyzeTeam()
@@ -192,14 +243,29 @@ export function analysisTemplate(analysis) {
   return `<h3>Suggestions</h3>
 <ul class="tips">${tips}</ul>
 <h3>Weaknesses and resistances</h3>
+<p class="note">Hover over a type for a moment, or select it, to see which of your Pokémon are weak to it or resist it.</p>
+<div class="matchups-wrap">
 <table class="matchups">
   <caption class="visually-hidden">Pokémon on your team that are weak to, resist, or are immune to each attacking type</caption>
   <thead><tr><th scope="col">Attacking type</th><th scope="col">Weak</th><th scope="col">Resist</th><th scope="col">Immune</th></tr></thead>
   <tbody>${analysis.defense.map(defenseRowTemplate).join("")}</tbody>
 </table>
+<div id="matchup-popover" class="matchup-popover hide" role="region" aria-label="Pokémon affected by this type" tabindex="-1"></div>
+</div>
 <h3>Type coverage</h3>
 <p class="note">Based on your Pokémon's types only. Moves can cover more.</p>
-<ul class="coverage">${analysis.coverage.map(coverageItemTemplate).join("")}</ul>`;
+<div class="coverage-groups">
+${coverageGroupTemplate(
+  "covered-heading",
+  "Covered",
+  analysis.coverage.filter((entry) => entry.covered),
+)}
+${coverageGroupTemplate(
+  "uncovered-heading",
+  "Not covered",
+  analysis.coverage.filter((entry) => !entry.covered),
+)}
+</div>`;
 }
 
 function ownedFlagsTemplate(entry) {

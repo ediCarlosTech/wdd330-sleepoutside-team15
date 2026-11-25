@@ -23,6 +23,7 @@ const teamLink = document.querySelector("#team-link");
 const teamCount = document.querySelector("#team-count");
 const teamSizeLabel = document.querySelector("#team-size-label");
 const form = document.querySelector("#search-form");
+const homeLink = document.querySelector("#home-link");
 const dialog = document.querySelector("#details-dialog");
 
 const team = new Team(storage);
@@ -128,6 +129,10 @@ function showRoute() {
   });
   document.title = PAGES[route].title;
 
+  // the search bar belongs to the search page; elsewhere a Home button takes its place
+  form.classList.toggle("hide", route !== "search");
+  homeLink.classList.toggle("hide", route === "search");
+
   if (route === "team") {
     teamView.render();
   } else if (route === "owned") {
@@ -182,10 +187,6 @@ dialog.addEventListener("close", refreshSearchIfStale);
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  // searching from the team page goes back to search first
-  if (window.location.hash === "#/team") {
-    window.location.hash = "#/search";
-  }
   searchIsStale = false;
   searchView.runSearch();
 });

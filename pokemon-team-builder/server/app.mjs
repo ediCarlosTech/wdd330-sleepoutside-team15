@@ -1,11 +1,18 @@
+import { randomInt } from "node:crypto";
 import express from "express";
-import { hashPassword, verifyPassword, getDummyHash } from "./passwords.mjs";
+import {
+  hashPassword,
+  verifyPassword,
+  getDummyHash,
+  NO_PASSWORD,
+} from "./passwords.mjs";
 import {
   SESSION_COOKIE,
   createSession,
   findSessionUser,
   deleteSession,
   readCookie,
+  toUser,
 } from "./sessions.mjs";
 import { createLimiter } from "./rateLimit.mjs";
 import {
@@ -13,21 +20,37 @@ import {
   validateCredentials,
   validateOwned,
   ownedFromRow,
+  suggestUsername,
 } from "./validate.mjs";
+import { createGoogleVerifier } from "./google.mjs";
 
 // What a page may load. The app uses its own files, PokeAPI for data,
 // GIPHY for reaction GIFs, Google Fonts, and https images (sprites).
-const CONTENT_SECURITY_POLICY = [
-  "default-src 'self'",
-  "script-src 'self'",
-  "style-src 'self' https://fonts.googleapis.com",
-  "font-src https://fonts.gstatic.com",
-  "img-src 'self' https: data:",
-  "connect-src 'self' https://pokeapi.co https://api.giphy.com",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-].join("; ");
+// With Google sign-in on, it also needs Google's sign-in script, button frame,
+// and styles (the sources Google documents for a strict policy).
+function contentSecurityPolicy(googleEnabled) {
+  const gsi = "https://accounts.google.com/gsi/";
+  const withGoogle = (sources, extra) =>
+    googleEnabled ? `${sources} ${extra}` : sources;
+
+  return [
+    "default-src 'self'",
+    withGoogle("script-src 'self'", `${gsi}client`),
+    withGoogle("style-src 'self' https://fonts.googleapis.com", `${gsi}style`),
+    "font-src https://fonts.gstatic.com",
+    "img-src 'self' https: data:",
+    withGoogle(
+      "connect-src 'self' https://pokeapi.co https://api.giphy.com",
+      gsi,
+    ),
+    googleEnabled ? `frame-src ${gsi}` : null,
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ]
+    .filter(Boolean)
+    .join("; ");
+}
 
 const READ_ONLY_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 const BODY_METHODS = new Set(["POST", "PUT", "PATCH"]);
@@ -35,10 +58,11 @@ const BODY_METHODS = new Set(["POST", "PUT", "PATCH"]);
 const OWNED_COLUMNS = `species, nickname, cp, level, iv_attack, iv_defense, iv_stamina,
   fast_move, charged_move_1, charged_move_2, shiny, shadow, lucky, notes`;
 
-function securityHeaders(production) {
+function securityHeaders(production, googleEnabled) {
+  const policy = contentSecurityPolicy(googleEnabled);
   return (request, response, next) => {
     response.set({
-      "Content-Security-Policy": CONTENT_SECURITY_POLICY,
+      "Content-Security-Policy": policy,
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
       "Referrer-Policy": "strict-origin-when-cross-origin",
@@ -81,6 +105,12 @@ export function createApp({
   production = false,
   staticDir = null,
   extraOrigins = [],
+  // the Google OAuth client ID; empty turns Google sign-in off
+  googleClientId = "",
+  // how to check a Google token. Tests pass a stand-in.
+  verifyGoogle = googleClientId
+    ? createGoogleVerifier({ clientId: googleClientId })
+    : null,
   loginByUser = { max: 8, windowMs: 15 * 60 * 1000 },
   loginByIp = { max: 40, windowMs: 15 * 60 * 1000 },
   registerByIp = { max: 20, windowMs: 60 * 60 * 1000 },
@@ -91,7 +121,7 @@ export function createApp({
     // the host's proxy terminates HTTPS, so trust it for the real address and protocol
     app.set("trust proxy", 1);
   }
-  app.use(securityHeaders(production));
+  app.use(securityHeaders(production, Boolean(verifyGoogle)));
 
   const userLimiter = createLimiter(loginByUser);
   const ipLimiter = createLimiter(loginByIp);
@@ -188,7 +218,14 @@ export function createApp({
     }
 
     startSession(response, userId);
-    return response.status(201).json({ user: { id: userId, username } });
+    return response.status(201).json({
+      user: toUser({
+        id: userId,
+        username,
+        password_hash: hash,
+        google_sub: null,
+      }),
+    });
   });
 
   api.post("/auth/login", async (request, response) => {
@@ -209,16 +246,18 @@ export function createApp({
 
     const row = db
       .prepare(
-        "SELECT id, username, password_hash FROM users WHERE username = ?",
+        "SELECT id, username, password_hash, google_sub FROM users WHERE username = ?",
       )
       .get(username);
-    // a made-up name still costs one hash, so timing does not reveal who exists
+    // A made-up name, or a Google-only account with no password, still costs
+    // one hash, so timing does not reveal which names exist or how they sign in.
+    const hasPassword = row && row.password_hash !== NO_PASSWORD;
     const passwordIsRight = await verifyPassword(
       password,
-      row ? row.password_hash : await getDummyHash(),
+      hasPassword ? row.password_hash : await getDummyHash(),
     );
 
-    if (!row || !passwordIsRight) {
+    if (!hasPassword || !passwordIsRight) {
       userLimiter.hit(userKey);
       ipLimiter.hit(request.ip);
       // the same answer for "no such user" and "wrong password"
@@ -229,7 +268,7 @@ export function createApp({
 
     userLimiter.reset(userKey);
     startSession(response, row.id);
-    return response.json({ user: { id: row.id, username: row.username } });
+    return response.json({ user: toUser(row) });
   });
 
   api.post("/auth/logout", (request, response) => {
@@ -251,22 +290,154 @@ export function createApp({
       return tooManyAttempts(response, wait);
     }
 
-    const password =
-      typeof request.body?.password === "string" ? request.body.password : "";
     const row = db
       .prepare("SELECT password_hash FROM users WHERE id = ?")
       .get(request.user.id);
 
-    if (!(await verifyPassword(password, row.password_hash))) {
-      userLimiter.hit(key);
-      return response
-        .status(403)
-        .json({ error: "That password is not right." });
+    if (row.password_hash === NO_PASSWORD) {
+      // A Google-only account has no password to ask for, so the person types
+      // their username to show this is deliberate. The login itself is the proof.
+      const typed =
+        typeof request.body?.confirm === "string" ? request.body.confirm : "";
+      if (typed.trim().toLowerCase() !== request.user.username.toLowerCase()) {
+        return response
+          .status(403)
+          .json({ error: "Type your username exactly to confirm." });
+      }
+    } else {
+      const password =
+        typeof request.body?.password === "string" ? request.body.password : "";
+      if (!(await verifyPassword(password, row.password_hash))) {
+        userLimiter.hit(key);
+        return response
+          .status(403)
+          .json({ error: "That password is not right." });
+      }
     }
 
     db.prepare("DELETE FROM users WHERE id = ?").run(request.user.id);
     endSession(request, response);
     return response.status(204).end();
+  });
+
+  // ---- Google sign-in ----
+
+  // the page asks which sign-in options exist. The client ID is public by design.
+  api.get("/config", (request, response) => {
+    response.json({ googleClientId: verifyGoogle ? googleClientId : null });
+  });
+
+  // a name for a new Google account, made unique with a number if needed
+  function createGoogleUser(sub, hint) {
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      const suffix = attempt === 0 ? "" : `_${randomInt(1000, 10000)}`;
+      const username = suggestUsername(hint, suffix);
+      try {
+        const id = Number(
+          db
+            .prepare(
+              `INSERT INTO users (username, password_hash, google_sub, created_at)
+               VALUES (?, ?, ?, ?)`,
+            )
+            .run(username, NO_PASSWORD, sub, new Date().toISOString())
+            .lastInsertRowid,
+        );
+        return toUser({
+          id,
+          username,
+          password_hash: NO_PASSWORD,
+          google_sub: sub,
+        });
+      } catch (err) {
+        if (err.code !== "SQLITE_CONSTRAINT_UNIQUE") {
+          throw err;
+        }
+        // two sign-ins at once for the same Google account: use the first
+        const existing = db
+          .prepare(
+            "SELECT id, username, password_hash, google_sub FROM users WHERE google_sub = ?",
+          )
+          .get(sub);
+        if (existing) {
+          return toUser(existing);
+        }
+        // otherwise the username was taken: try again with a number
+      }
+    }
+    throw new Error("Could not find a free username.");
+  }
+
+  // Signs in with a Google token, creating an account the first time.
+  // With { link: true } while logged in, it connects that Google account to
+  // the current account instead.
+  api.post("/auth/google", async (request, response) => {
+    if (!verifyGoogle) {
+      return response
+        .status(404)
+        .json({ error: "Google sign-in isn't set up." });
+    }
+    const wait = ipLimiter.retryAfter(request.ip);
+    if (wait) {
+      return tooManyAttempts(response, wait);
+    }
+
+    const credential = request.body?.credential;
+    if (
+      typeof credential !== "string" ||
+      credential.length === 0 ||
+      credential.length > 4096
+    ) {
+      return response
+        .status(400)
+        .json({ error: "Send the Google credential." });
+    }
+
+    let claims;
+    try {
+      claims = await verifyGoogle(credential);
+    } catch (err) {
+      return response.status(503).json({
+        error:
+          "Google sign-in is unavailable right now. Try again in a moment.",
+      });
+    }
+    if (!claims) {
+      ipLimiter.hit(request.ip);
+      return response
+        .status(401)
+        .json({ error: "Google sign-in didn't work. Try again." });
+    }
+
+    const owner = db
+      .prepare(
+        "SELECT id, username, password_hash, google_sub FROM users WHERE google_sub = ?",
+      )
+      .get(claims.sub);
+
+    if (request.body.link === true) {
+      const current = findSessionUser(db, readCookie(request, SESSION_COOKIE));
+      if (!current) {
+        return response.status(401).json({ error: "Log in to continue." });
+      }
+      if (owner && owner.id !== current.id) {
+        return response.status(409).json({
+          error: "That Google account is already connected to another account.",
+        });
+      }
+      db.prepare("UPDATE users SET google_sub = ? WHERE id = ?").run(
+        claims.sub,
+        current.id,
+      );
+      return response.json({ user: { ...current, googleLinked: true } });
+    }
+
+    if (owner) {
+      startSession(response, owner.id);
+      return response.json({ user: toUser(owner) });
+    }
+    const user = createGoogleUser(claims.sub, claims.hint);
+    startSession(response, user.id);
+    return response.status(201).json({ user });
   });
 
   // ---- owned Pokémon (every query is limited to the signed-in user) ----

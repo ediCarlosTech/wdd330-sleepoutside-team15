@@ -7,6 +7,8 @@ import {
   formatName,
 } from "./renderer.js";
 import { analyzeTeam } from "./teamAnalysis.js";
+import TypeDiagram from "./typeDiagram.js";
+import MatchupDrill from "./matchupDrill.js";
 import { prefersReducedMotion } from "./animations.js";
 
 // The team page: the slots, saving and loading, and the team report.
@@ -22,6 +24,11 @@ export default class TeamView {
     this.slots = document.querySelector("#team-slots");
     this.message = document.querySelector("#team-message");
     this.analysis = document.querySelector("#analysis");
+    this.diagram = new TypeDiagram({
+      ring: document.querySelector("#diagram-ring"),
+      readout: document.querySelector("#diagram-readout"),
+    });
+    this.drill = new MatchupDrill(this.analysis, { openDetails });
     this.saved = document.querySelector("#saved-teams");
     this.reaction = document.querySelector("#reaction");
     this.nameInput = document.querySelector("#team-name");
@@ -31,6 +38,8 @@ export default class TeamView {
   }
 
   init() {
+    this.drill.init();
+    this.diagram.init();
     this.slots.addEventListener("click", (event) => {
       const remove = event.target.closest(".slot__remove");
       const open = event.target.closest(".slot__open");
@@ -182,7 +191,13 @@ export default class TeamView {
     }
 
     const members = loaded.filter(Boolean);
-    this.analysis.innerHTML = analysisTemplate(analyzeTeam(members, maxSize));
+    const analysis = analyzeTeam(members, maxSize);
+    this.analysis.innerHTML = analysisTemplate(analysis);
+    this.drill.setRows(analysis.defense);
+    this.diagram.render(
+      members.map((member) => member.types),
+      analysis.coverage,
+    );
     this.drawReaction(names);
   }
 

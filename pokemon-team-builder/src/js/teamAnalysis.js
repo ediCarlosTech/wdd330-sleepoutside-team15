@@ -146,9 +146,19 @@ function buildSuggestions(size, maxSize, defense, coverage) {
 // maxSize: how many Pokémon the team can hold
 export function analyzeTeam(members, maxSize = MAX_TEAM_SIZE) {
   const defense = TYPES.map((attackType) => {
-    const row = { type: attackType, weak: 0, resist: 0, immune: 0 };
+    // affected: who is weak, resists, or is immune, for the drill-through
+    const row = {
+      type: attackType,
+      weak: 0,
+      resist: 0,
+      immune: 0,
+      affected: [],
+    };
     members.forEach((member) => {
       const multiplier = getMultiplier(attackType, member.types);
+      if (multiplier !== 1) {
+        row.affected.push({ name: member.name, multiplier });
+      }
       if (multiplier === 0) {
         row.immune += 1;
       } else if (multiplier > 1) {
@@ -157,6 +167,8 @@ export function analyzeTeam(members, maxSize = MAX_TEAM_SIZE) {
         row.resist += 1;
       }
     });
+    // the most exposed first (4x, 2x), then resists, then immunities
+    row.affected.sort((first, second) => second.multiplier - first.multiplier);
     row.risk = isRisk(row, members.length);
     return row;
   });

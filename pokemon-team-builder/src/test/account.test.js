@@ -1,12 +1,16 @@
 import Account from "../js/account.js";
 import * as accountApi from "../js/accountApi.js";
 
-const ok = (data) => ({ ok: true, data });
+const ok = (data, status = 200) => ({ ok: true, status, data });
 const fail = (error, status = 400) => ({ ok: false, status, error });
 
 function fakeApi(overrides = {}) {
   return {
     getSession: jest.fn(async () => ok({ user: null })),
+    getConfig: jest.fn(async () => ok({ googleClientId: null })),
+    googleSignIn: jest.fn(async () =>
+      ok({ user: { id: 3, username: "Misty", hasPassword: false } }, 201),
+    ),
     register: jest.fn(async (username) => ok({ user: { id: 1, username } })),
     login: jest.fn(async (username) => ok({ user: { id: 1, username } })),
     logout: jest.fn(async () => ok(null)),
@@ -242,6 +246,113 @@ describe("Account", () => {
       expect((await account.deleteAccount("secret-pass")).ok).toBe(true);
       expect(account.isLoggedIn).toBe(false);
     });
+
+    test("a Google-only account confirms deletion with its username, not a password", async () => {
+      const api = fakeApi();
+      const account = new Account(api);
+      await account.googleCredential("token");
+      await account.deleteAccount("Misty");
+      expect(api.deleteAccount).toHaveBeenCalledWith({ confirm: "Misty" });
+      expect(account.isLoggedIn).toBe(false);
+    });
+
+    test("a password account still sends its password", async () => {
+      const api = fakeApi();
+      const account = new Account(api);
+      await account.login("ash", "secret-pass");
+      await account.deleteAccount("secret-pass");
+      expect(api.deleteAccount).toHaveBeenCalledWith({
+        password: "secret-pass",
+      });
+    });
+  });
+
+  describe("Google sign-in", () => {
+    test("remembers the client ID, and stays off when the server has none", async () => {
+      const on = new Account(
+        fakeApi({
+          getConfig: jest.fn(async () => ok({ googleClientId: "abc.apps" })),
+        }),
+      );
+      await on.init();
+      expect(on.googleClientId).toBe("abc.apps");
+
+      const off = new Account(fakeApi());
+      await off.init();
+      expect(off.googleClientId).toBeNull();
+    });
+
+    test("an unreachable config just means Google stays off", async () => {
+      const account = new Account(
+        fakeApi({ getConfig: jest.fn(async () => fail("down", 0)) }),
+      );
+      await account.init();
+      expect(account.googleClientId).toBeNull();
+      expect(account.ready).toBe(true);
+    });
+
+    test("signing in while logged out logs in, and says when it made the account", async () => {
+      const api = fakeApi();
+      const account = new Account(api);
+      const listener = jest.fn();
+      account.onChange(listener);
+
+      const first = await account.googleCredential("token");
+      expect(api.googleSignIn).toHaveBeenCalledWith("token", false);
+      expect(first).toEqual({ ok: true, linked: false, created: true });
+      expect(account.user.username).toBe("Misty");
+      expect(api.listOwned).toHaveBeenCalled();
+      expect(listener).toHaveBeenCalledWith("session");
+
+      api.googleSignIn.mockResolvedValueOnce(
+        ok({ user: { id: 3, username: "Misty" } }, 200),
+      );
+      const again = await new Account(api).googleCredential("token");
+      expect(again.created).toBe(false);
+    });
+
+    test("while logged in, the same credential connects Google instead", async () => {
+      const api = fakeApi({
+        googleSignIn: jest.fn(async () =>
+          ok({ user: { id: 1, username: "ash", googleLinked: true } }),
+        ),
+      });
+      const account = new Account(api);
+      await account.login("ash", "secret-pass");
+      account.owned = [{ id: 1, species: "mew" }];
+
+      const result = await account.googleCredential("token");
+      expect(api.googleSignIn).toHaveBeenCalledWith("token", true);
+      expect(result).toEqual({ ok: true, linked: true, created: false });
+      expect(account.user.googleLinked).toBe(true);
+      // still the same person, so their Pokémon stay
+      expect(account.owned).toHaveLength(1);
+    });
+
+    test("a failure shows the server's message and changes nothing", async () => {
+      const api = fakeApi({
+        googleSignIn: jest.fn(async () =>
+          fail("Google sign-in didn't work. Try again.", 401),
+        ),
+      });
+      const account = new Account(api);
+      expect(await account.googleCredential("bad")).toEqual({
+        ok: false,
+        error: "Google sign-in didn't work. Try again.",
+      });
+      expect(account.isLoggedIn).toBe(false);
+    });
+
+    test("an expired login while connecting is reported as ended", async () => {
+      const api = fakeApi({
+        googleSignIn: jest.fn(async () => fail("Log in to continue.", 401)),
+      });
+      const account = new Account(api);
+      await account.login("ash", "secret-pass");
+      const result = await account.googleCredential("token");
+      expect(result.ok).toBe(false);
+      expect(account.isLoggedIn).toBe(false);
+    });
   });
 });
 
@@ -283,7 +394,10 @@ describe("accountApi", () => {
     global.fetch = jest.fn(async () => reply(200, {}));
     await accountApi.updateOwned(5, {});
     await accountApi.deleteOwned(5);
-    await accountApi.deleteAccount("pw");
+    await accountApi.deleteAccount({ password: "pw" });
+    await accountApi.getConfig();
+    await accountApi.googleSignIn("tok");
+    await accountApi.googleSignIn("tok", true);
     expect(
       global.fetch.mock.calls.map(
         ([url, options]) => `${options.method} ${url}`,
@@ -292,7 +406,16 @@ describe("accountApi", () => {
       "PUT /api/owned/5",
       "DELETE /api/owned/5",
       "DELETE /api/account",
+      "GET /api/config",
+      "POST /api/auth/google",
+      "POST /api/auth/google",
     ]);
+    const bodies = global.fetch.mock.calls.slice(-3).map(([, o]) => o.body);
+    expect(JSON.parse(bodies[1])).toEqual({ credential: "tok" });
+    expect(JSON.parse(bodies[2])).toEqual({ credential: "tok", link: true });
+    expect(JSON.parse(global.fetch.mock.calls[2][1].body)).toEqual({
+      password: "pw",
+    });
   });
 
   test("an error answer gives the server's message", async () => {
@@ -306,7 +429,11 @@ describe("accountApi", () => {
 
   test("an empty 204 answer is a success", async () => {
     global.fetch = jest.fn(async () => reply(204));
-    expect(await accountApi.logout()).toEqual({ ok: true, data: null });
+    expect(await accountApi.logout()).toEqual({
+      ok: true,
+      status: 204,
+      data: null,
+    });
   });
 
   test("a failed request is reported, not thrown", async () => {

@@ -24,6 +24,8 @@ if (serveSite && !existsSync(distPath)) {
 const app = createApp({
   db,
   production,
+  // set to turn on "Sign in with Google" (a Google OAuth client ID)
+  googleClientId: process.env.GOOGLE_CLIENT_ID || "",
   staticDir: serveSite ? distPath : null,
   // extra allowed origins for state-changing requests, comma separated
   extraOrigins: (process.env.ALLOWED_ORIGINS ?? "").split(",").filter(Boolean),

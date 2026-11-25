@@ -1,3 +1,5 @@
+import { renderGoogleButton } from "./googleSignIn.js";
+
 // The header's login controls plus the login/create-account and
 // delete-account pop-ups. All the real work happens in Account.
 
@@ -44,14 +46,22 @@ export default class AuthView {
     this.error = document.querySelector("#auth-error");
     this.submitButton = document.querySelector("#auth-submit");
     this.toggle = document.querySelector("#auth-toggle");
+    this.googleSection = document.querySelector("#auth-google-section");
+    this.googleButton = document.querySelector("#auth-google");
 
     this.deleteDialog = document.querySelector("#delete-dialog");
     this.deleteForm = document.querySelector("#delete-form");
+    this.deleteUsername = document.querySelector("#delete-username");
     this.deletePassword = document.querySelector("#delete-password");
+    this.deleteConfirm = document.querySelector("#delete-confirm");
+    this.passwordField = document.querySelector("#delete-password-field");
+    this.confirmField = document.querySelector("#delete-confirm-field");
+    this.deleteInstruction = document.querySelector("#delete-instruction");
     this.deleteError = document.querySelector("#delete-error");
     this.deleteButton = document.querySelector("#delete-submit");
 
     this.messageTimer = null;
+    this.googleDrawn = false;
   }
 
   init() {
@@ -105,6 +115,11 @@ export default class AuthView {
     this.submitButton.textContent = settings.submit;
     this.toggle.textContent = settings.toggleText;
     this.password.autocomplete = settings.autocomplete;
+    // Safari and iCloud Keychain use this to suggest a password that passes
+    this.password.setAttribute(
+      "passwordrules",
+      mode === "register" ? "minlength: 8; maxlength: 128;" : "",
+    );
     this.hint.classList.toggle("hide", mode === "login");
     // creating an account has rules; logging in must not block an older password
     this.password.minLength = mode === "register" ? 8 : 0;
@@ -119,6 +134,62 @@ export default class AuthView {
       this.dialog.showModal();
     }
     this.username.focus();
+    this.showGoogle();
+  }
+
+  // Google's button appears under the form only when the server has it set up.
+  // It is drawn once the pop-up is open, because Google sizes it from the space.
+  async showGoogle() {
+    const enabled = Boolean(this.account.googleClientId);
+    this.googleSection.classList.toggle("hide", !enabled);
+    if (!enabled || this.googleDrawn) {
+      return;
+    }
+    this.googleDrawn = await this.drawGoogle(this.googleButton);
+  }
+
+  // draws Google's button in `container`; says so there when Google is unreachable
+  async drawGoogle(container) {
+    const drawn = await renderGoogleButton(
+      container,
+      this.account.googleClientId,
+      (credential) => this.handleGoogle(credential),
+    );
+    if (!drawn) {
+      container.textContent =
+        "Google sign-in couldn't load. Check your connection, or use a username and password.";
+    }
+    return drawn;
+  }
+
+  // Google finished: this logs in, creates an account, or (when already logged
+  // in) connects Google to the current account
+  async handleGoogle(credential) {
+    const result = await this.account.googleCredential(credential);
+
+    if (!result.ok) {
+      if (this.dialog.open) {
+        this.error.textContent = result.error;
+      } else {
+        this.say(result.error, true);
+      }
+      return;
+    }
+    if (this.dialog.open) {
+      this.form.reset();
+      this.dialog.close();
+    }
+    const { username } = this.account.user;
+    if (result.linked) {
+      this.say("Google is connected. You can now sign in with it.");
+      return;
+    }
+    this.say(
+      result.created
+        ? `Welcome, ${username}! Your account is ready.`
+        : `Logged in as ${username}.`,
+    );
+    this.nameLabel.focus();
   }
 
   async submit(event) {
@@ -131,10 +202,9 @@ export default class AuthView {
     this.error.textContent = "";
 
     const action = this.mode === "register" ? "register" : "login";
-    const result = await this.account[action](
-      this.username.value.trim(),
-      this.password.value,
-    );
+    const username = this.username.value.trim();
+    const { value: password } = this.password;
+    const result = await this.account[action](username, password);
 
     this.busy = false;
     this.submitButton.disabled = false;
@@ -147,6 +217,7 @@ export default class AuthView {
       return;
     }
 
+    await this.offerToSave(username, password);
     this.form.reset();
     this.dialog.close();
     this.say(
@@ -156,6 +227,26 @@ export default class AuthView {
     );
     // the Log in button just disappeared, so give focus a new home
     this.nameLabel.focus();
+  }
+
+  // Asks Chrome and Edge to offer saving the login. They cannot always tell
+  // that a script-driven form was a real sign-in, so this says so directly.
+  // Other browsers decide for themselves, and a failure here changes nothing.
+  async offerToSave(username, password) {
+    if (!window.PasswordCredential || !navigator.credentials?.store) {
+      return;
+    }
+    try {
+      await navigator.credentials.store(
+        new window.PasswordCredential({
+          id: username,
+          password,
+          name: username,
+        }),
+      );
+    } catch (err) {
+      // the person may have turned password saving off
+    }
   }
 
   async logout() {
@@ -173,9 +264,29 @@ export default class AuthView {
 
   openDelete() {
     this.deleteForm.reset();
+    this.deleteUsername.value = this.account.user?.username ?? "";
     this.deleteError.textContent = "";
+
+    // a Google-only account has no password, so it types its username instead
+    const passwordless = this.account.user?.hasPassword === false;
+    this.passwordField.classList.toggle("hide", passwordless);
+    this.confirmField.classList.toggle("hide", !passwordless);
+    // a disabled field is skipped by form checking and by password managers
+    this.deletePassword.disabled = passwordless;
+    this.deleteConfirm.disabled = !passwordless;
+    this.deleteUsername.disabled = passwordless;
+    this.deleteInstruction.textContent = passwordless
+      ? "Type your username to confirm."
+      : "Enter your password to confirm.";
+
     this.deleteDialog.showModal();
-    this.deletePassword.focus();
+    (passwordless ? this.deleteConfirm : this.deletePassword).focus();
+  }
+
+  get deleteInput() {
+    return this.deleteConfirm.disabled
+      ? this.deletePassword
+      : this.deleteConfirm;
   }
 
   async submitDelete(event) {
@@ -187,15 +298,15 @@ export default class AuthView {
     this.deleteButton.disabled = true;
     this.deleteError.textContent = "";
 
-    const result = await this.account.deleteAccount(this.deletePassword.value);
+    const result = await this.account.deleteAccount(this.deleteInput.value);
 
     this.busy = false;
     this.deleteButton.disabled = false;
 
     if (!result.ok) {
       this.deleteError.textContent = result.error;
-      this.deletePassword.value = "";
-      this.deletePassword.focus();
+      this.deleteInput.value = "";
+      this.deleteInput.focus();
       return;
     }
     this.deleteForm.reset();

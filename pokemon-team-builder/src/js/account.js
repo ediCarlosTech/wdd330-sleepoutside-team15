@@ -15,6 +15,8 @@ export default class Account {
     this.ready = false;
     // set when the owned list could not be loaded, so the page can say so
     this.loadError = "";
+    // Google's public OAuth client ID, or null when Google sign-in is off
+    this.googleClientId = null;
     this.listeners = [];
     this.best = new Map();
   }
@@ -40,7 +42,13 @@ export default class Account {
 
   // restores a session left by an earlier visit
   async init() {
-    const session = await this.api.getSession();
+    const [session, config] = await Promise.all([
+      this.api.getSession(),
+      this.api.getConfig(),
+    ]);
+    this.googleClientId = config.ok
+      ? (config.data.googleClientId ?? null)
+      : null;
     if (session.ok && session.data.user) {
       this.user = session.data.user;
       await this.loadOwned();
@@ -85,6 +93,28 @@ export default class Account {
     return this.signIn("register", username, password);
   }
 
+  // What Google hands back after the person signs in. While logged in it
+  // connects that Google account to this one; otherwise it logs in, or
+  // creates an account the first time.
+  async googleCredential(credential) {
+    const linking = this.isLoggedIn;
+    const result = await this.api.googleSignIn(credential, linking);
+    if (!result.ok) {
+      return linking ? this.failed(result) : { ok: false, error: result.error };
+    }
+    this.user = result.data.user;
+    if (!linking) {
+      this.owned = [];
+      await this.loadOwned();
+    }
+    this.notify("session");
+    return {
+      ok: true,
+      linked: linking,
+      created: !linking && result.status === 201,
+    };
+  }
+
   clear() {
     this.user = null;
     this.owned = [];
@@ -102,8 +132,13 @@ export default class Account {
     return { ok: true };
   }
 
-  async deleteAccount(password) {
-    const result = await this.api.deleteAccount(password);
+  // `typed` is the password, or for a Google-only account the username
+  async deleteAccount(typed) {
+    const proof =
+      this.user?.hasPassword === false
+        ? { confirm: typed }
+        : { password: typed };
+    const result = await this.api.deleteAccount(proof);
     if (!result.ok) {
       return { ok: false, error: result.error };
     }

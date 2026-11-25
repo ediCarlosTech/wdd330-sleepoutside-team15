@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY,
   username TEXT NOT NULL UNIQUE COLLATE NOCASE,
   password_hash TEXT NOT NULL,
+  -- Google's permanent id for the person, when they use Google sign-in
+  google_sub TEXT,
   created_at TEXT NOT NULL
 );
 
@@ -42,6 +44,23 @@ CREATE TABLE IF NOT EXISTS owned (
 CREATE INDEX IF NOT EXISTS owned_user ON owned(user_id);
 `;
 
+// Databases created before Google sign-in have no google_sub column. CREATE
+// TABLE IF NOT EXISTS leaves them alone, so add what is missing.
+function migrate(db) {
+  const columns = db
+    .prepare("PRAGMA table_info(users)")
+    .all()
+    .map((column) => column.name);
+  if (!columns.includes("google_sub")) {
+    db.exec("ALTER TABLE users ADD COLUMN google_sub TEXT");
+  }
+  // one Google account can belong to only one user
+  db.exec(
+    `CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub
+     ON users(google_sub) WHERE google_sub IS NOT NULL`,
+  );
+}
+
 // path ":memory:" gives a throwaway database, which the tests use
 export function openDatabase(path = ":memory:") {
   const db = new Database(path);
@@ -49,5 +68,6 @@ export function openDatabase(path = ":memory:") {
   // SQLite only enforces relationships when asked to
   db.pragma("foreign_keys = ON");
   db.exec(SCHEMA);
+  migrate(db);
   return db;
 }
