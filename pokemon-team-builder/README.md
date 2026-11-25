@@ -149,3 +149,4 @@ PokeAPI has no list of every Pokémon with its types, so the first search with a
 - **Coverage is by type only.** It uses each Pokémon's own types, not its moves.
 - **Not tested against the live PokeAPI.** The build environment could not reach it, so the browser tests use a mock. The first run on a real connection is worth a look.
 - **Migrate from disk use to Postgres DB.** 
+- **Add a team Score based off coverage level percentile and possible move advantage weighted against the elements the team resists.**
