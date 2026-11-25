@@ -2,6 +2,7 @@ import {
   getLocalStorage,
   setLocalStorage,
   loadheaderfooter,
+  imageHandler
 } from "./utils.mjs";
 
 import { addToCart } from "./cartUtils.mjs";
@@ -33,10 +34,10 @@ if (Array.isArray(wishlist) && wishlist.length > 0) {
     item.classList.add("product-card");
 
     // Create the product image
-    const image = document.createElement("img");
-    image.src = product.Images.PrimarySmall;
-    image.alt = product.NameWithoutBrand;
-
+    // imageHanndeler adds it reponsive
+    const image = document.createElement("div");
+    image.innerHTML = imageHandler(product)
+    
     // Create the product name
     const name = document.createElement("h2");
     name.classList.add("card__name");

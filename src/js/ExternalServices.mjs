@@ -19,6 +19,7 @@ export default class ExternalServices {
     const response = await fetch(`${baseURL}products/search/${category}`);
     const data = await convertToJson(response);
     // the API puts the list of products in "Result"
+    console.log(data.Result)
     return data.Result;
   }
 
@@ -36,7 +37,6 @@ export default class ExternalServices {
   }
 
   async checkout(order) {
-
     const url = "https://wdd330-backend-osp8.onrender.com/checkout";
 
     const options = {

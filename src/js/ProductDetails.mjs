@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, imageHandler, setLocalStorage } from "./utils.mjs";
 import { addToCart } from "./cartUtils.mjs";
 
 // Common product detail page
@@ -196,16 +196,10 @@ export default class ProductDetails {
     // Display product name
     document.getElementById("productName").textContent =
       product.NameWithoutBrand;
-
-    // Display responsive product image
-    const { PrimaryMedium, PrimaryLarge, PrimaryExtraLarge } = product.Images;
-
-    document.getElementById("productImageSmall").srcset = PrimaryMedium;
-    document.getElementById("productImageMedium").srcset = PrimaryLarge;
-
-    const productImage = document.getElementById("productImage");
-    productImage.src = PrimaryExtraLarge;
-    productImage.alt = product.NameWithoutBrand;
+      
+    // Display the responsive image
+    document.getElementById("prod-image").innerHTML = 
+    imageHandler(product);
 
     // Display product price
     document.getElementById("productPrice").textContent =
