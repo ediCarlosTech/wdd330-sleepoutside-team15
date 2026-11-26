@@ -125,23 +125,22 @@ export default class CheckoutProcess {
   async checkout(form) {
 
     // Get customer information from the form
-    const order = formDataToJSON(form);
-
-    // Calculate final totals
-    this.calculateOrderTotal();
-
-    // Add order date
-    order.orderDate = new Date().toISOString();
-
-    // Add order totals
-    order.orderTotal = this.orderTotal.toFixed(2);
-    order.shipping = this.shipping;
-    order.tax = this.tax.toFixed(2);
-
-    // Add products to the order
-    order.items = packageItems(this.list);
-
-    // Send order to the server
-    return await this.services.checkout(order);
+    try {
+      const order = formDataToJSON(form);
+      // Calculate final totals
+      this.calculateOrderTotal();
+      // Add order date
+      order.orderDate = new Date().toISOString();
+      // Add order totals
+      order.orderTotal = this.orderTotal.toFixed(2);
+      order.shipping = this.shipping;
+      order.tax = this.tax.toFixed(2);
+      // Add products to the order
+      order.items = packageItems(this.list);
+      // Send order to the server
+      return await this.services.checkout(order);
+    } catch (err) {
+      alert(err)
+    }
   }
 }

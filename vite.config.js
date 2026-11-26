@@ -19,6 +19,8 @@ export default defineConfig({
         wishlist: resolve(__dirname, "src/wishlist/index.html"),
         // checkout page
         checkout: resolve(__dirname, "src/checkout/index.html"),
+        // order confirmation page after order payment
+        checkout: resolve(__dirname, "src/checkout/success.html"),
       },
     },
   },

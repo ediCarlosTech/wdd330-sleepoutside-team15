@@ -20,45 +20,61 @@
       <form id="checkoutForm">
         <!-- CUSTOMER INFORMATION-->
 
-        <fieldset>
+        <fieldset class="checkout-form">
           <legend>Customer Information</legend>
-          <label for="fname">First Name:</label>
-          <input type="text" id="fname" name="fname" autocomplete="given-name" required />
+          <label for="fname">First Name:
+            <input type="text" id="fname" name="fname" autocomplete="given-name" required />
+          </label>
 
-          <label for="lname">Last Name:</label>
-          <input type="text" id="lname" name="lname" autocomplete="family-name" required />
+          <label for="lname">Last Name:
+            <input type="text" id="lname" name="lname" autocomplete="family-name" required />
+          </label>
         </fieldset>
 
         <!-- SHIPPING ADDRESS-->
 
-        <fieldset>
+        <fieldset class="checkout-form">
           <legend>Shipping Address</legend>
 
-          <label for="street">Street Address:</label>
-          <input type="text" id="street" name="street" autocomplete="street-address" required />
+          <label for="street">Street Address:
+            <input type="text" id="street" name="street" autocomplete="street-address" required />
 
-          <label for="city">City:</label>
-          <input type="text" id="city" name="city" autocomplete="address-level2" required />
+          </label>
 
-          <label for="state">State:</label>
-          <input type="text" id="state" name="state" autocomplete="address-level1" required />
+          <label for="city">City:
+            <input type="text" id="city" name="city" autocomplete="address-level2" required />
 
-          <label for="zip">Zip Code:</label>
-          <input type="text" id="zip" name="zip" autocomplete="postal-code" required />
+          </label>
+
+          <label for="state">State:
+            <input type="text" id="state" name="state" autocomplete="address-level1" required />
+            
+          </label>
+
+          <label for="zip">Zip Code:
+            <input type="text" id="zip" name="zip" autocomplete="postal-code" required />
+
+          </label>
         </fieldset>
 
         <!-- PAYMENT INFORMATION-->
-        <fieldset>
+        <fieldset class="checkout-form">
           <legend>Payment Information</legend>
 
-          <label for="cardNumber">Credit Card Number:</label>
-          <input type="text" id="cardNumber" name="cardNumber" autocomplete="cc-number" required />
+          <label for="cardNumber">Credit Card Number:
+            <input type="text" id="cardNumber" name="cardNumber" autocomplete="cc-number" required />
 
-          <label for="expiration">Expiration Date:</label>
-          <input type="text" id="expiration" name="expiration" placeholder="MM/YY" autocomplete="cc-exp" required />
+          </label>
 
-          <label for="code">Security Code:</label>
-          <input type="text" id="code" name="code" inputmode="numeric" autocomplete="cc-csc" required />
+          <label for="expiration">Expiration Date:
+            <input type="text" id="expiration" name="expiration" placeholder="MM/YY" autocomplete="cc-exp" required />
+
+          </label>
+
+          <label for="code">Security Code:
+
+            <input type="text" id="code" name="code" inputmode="numeric" autocomplete="cc-csc" required />
+          </label>
         </fieldset>
 
         <!-- ORDER SUMMARY-->

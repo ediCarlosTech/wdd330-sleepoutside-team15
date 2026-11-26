@@ -46,6 +46,24 @@ p {
   padding: 0.75rem;
 }
 
+.checkout-form{
+  font-weight:bold;
+  margin:10px auto;
+}
+
+.checkout-form input{
+  display: inline;
+  padding: 5px; 
+  width: 300px;
+}
+
+.checkout-form label{
+  font-weight: lighter;
+  display: block;
+  padding: 2px;
+  margin:5px 10px;  
+}
+
 .logo {
   line-height: 60px;
   width: 245px;

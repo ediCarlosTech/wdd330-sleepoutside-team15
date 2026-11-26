@@ -20,19 +20,28 @@ zipInput.addEventListener("change", () => {
 });
 
 // Get checkout form
-const checkoutForm = document.querySelector("#checkoutForm");
+// const checkoutForm = document.querySelector("#checkoutForm");
 
 // Handle form submission
-checkoutForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
 
-  if (!checkoutForm.reportValidity()) {
-    return;
-  }
+document.querySelector('#checkoutSubmit').addEventListener('click', (e) => {
+  e.preventDefault();
+  const myForm = document.forms[0];
+  const chk_status = myForm.checkValidity();
+  myForm.reportValidity();
+  if(chk_status)
+    checkout.checkout();
+  });
+// checkoutForm.addEventListener("submit", async (event) => {
+//   event.preventDefault();
 
-  try {
-    await checkout.checkout(checkoutForm);
-  } catch (error) {
-    console.error("Checkout request failed:", error);
-  }
-});
+//   if (!checkoutForm.reportValidity()) {
+//     return;
+//   }
+
+//   try {
+//     await checkout.checkout(checkoutForm);
+//   } catch (error) {
+//     console.error("Checkout request failed:", error);
+//   }
+//});
