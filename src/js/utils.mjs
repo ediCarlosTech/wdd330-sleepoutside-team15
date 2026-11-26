@@ -167,6 +167,7 @@ function animateCartIcon() {
   restartAnimation(qs(".cartItemsQty"));
 }
 
+// add responsive images to all products
 function imageHandler(product) {
   // const { PrimaryMedium, PrimaryLarge, PrimaryExtraLarge } = product.Images;
 
@@ -184,6 +185,42 @@ function imageHandler(product) {
       <img src="${product.Images.PrimaryMedium}" alt="Image of ${product.NameWithoutBrand}" />
       </picture>`
 }
+// Display the breadcrumbs; receives the totol count of items (im refining this module)
+function breadcrumb(itemCount = 0) {
+  // get the category from the url bar
+  const urlParams = new URLSearchParams(window.location.search);
+  const preCategory = urlParams.get("category");
+  let category = ""
+
+  if (preCategory) {
+    category = preCategory.charAt(0).toUpperCase() + preCategory.slice(1);;
+  }
+
+  // contain custom text and item count for the the specific section 
+  // (I'll add some new features, but this works fine)
+  const wholeBread = {
+    Checkout: "Cart > Checkout",
+    Tents: `Product Category > ${category} > (${itemCount} items)`,
+    Backpacks: `Product Category > ${category} > (${itemCount} items)`,
+    Hammocks: `Product Category > ${category} > (${itemCount} items)`,
+    "Sleeping Bags": `Product Category > ${category} > (${itemCount} items)`,
+    "Product Details": `Product Category > ${category}`,
+    "My Wishlist": `My Whishlist > (${itemCount} items)`,
+    Cart: `Cart > (${itemCount} items)`
+  }
+
+  const breaDisplay = document.querySelector("#bread")
+  const current_page = document.title
+
+  let result = current_page.replace("Sleep Outside |", "").trim()
+
+  // search the title in the "wholeBread" object
+  if (result in wholeBread) {
+    result = wholeBread[result];
+  }
+
+  breaDisplay.innerHTML = `<p>Home > ${result}</p>`
+}
 
 // add new utility functions to this list so other modules can import them
 export {
@@ -198,5 +235,6 @@ export {
   renderListWithTemplate,
   renderWithTemplate,
   loadheaderfooter,
-  imageHandler
+  imageHandler,
+  breadcrumb
 };

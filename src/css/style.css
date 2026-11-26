@@ -120,6 +120,17 @@ p {
   border-bottom: 2px solid var(--primary-color);
 }
 
+/* add fancy style to the breadcrumb */
+#bread p{
+  margin: 0 0 0 5px;
+  padding: 0px;
+  font: var(--dark-grey);
+  font-size: var(--small-font);
+  font-style: italic;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  letter-spacing: -0.5px ;
+}
+
 /* hides an element, for example the cart footer when the cart is empty */
 .hide {
   display: none;

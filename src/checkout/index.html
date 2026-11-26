@@ -1,154 +1,100 @@
 <!doctype html>
 
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sleep Outside | Checkout</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <script src="../js/checkout.js" type="module"></script>
-  </head>
 
-  <body>
-    <header class="divider" id="main-header"></header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sleep Outside | Checkout</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="../js/checkout.js" type="module"></script>
+</head>
 
-    <main class="divider">
-      <section class="products">
-        <h1>Review & Place your Order</h1>
+<body>
+  <header class="divider" id="main-header"></header>
+  <div id="bread"></div>
+  <main class="divider">
+    <section class="products">
+      <h1>Review & Place your Order</h1>
 
-        <form id="checkoutForm">
-          <!-- CUSTOMER INFORMATION-->
+      <form id="checkoutForm">
+        <!-- CUSTOMER INFORMATION-->
 
-          <fieldset>
-            <legend>Customer Information</legend>
-            <label for="fname">First Name:</label>
-            <input
-              type="text"
-              id="fname"
-              name="fname"
-              autocomplete="given-name"
-              required
-            />
+        <fieldset>
+          <legend>Customer Information</legend>
+          <label for="fname">First Name:</label>
+          <input type="text" id="fname" name="fname" autocomplete="given-name" required />
 
-            <label for="lname">Last Name:</label>
-            <input
-              type="text"
-              id="lname"
-              name="lname"
-              autocomplete="family-name"
-              required
-            />
-          </fieldset>
+          <label for="lname">Last Name:</label>
+          <input type="text" id="lname" name="lname" autocomplete="family-name" required />
+        </fieldset>
 
-          <!-- SHIPPING ADDRESS-->
+        <!-- SHIPPING ADDRESS-->
 
-          <fieldset>
-            <legend>Shipping Address</legend>
+        <fieldset>
+          <legend>Shipping Address</legend>
 
-            <label for="street">Street Address:</label>
-            <input
-              type="text"
-              id="street"
-              name="street"
-              autocomplete="street-address"
-              required
-            />
+          <label for="street">Street Address:</label>
+          <input type="text" id="street" name="street" autocomplete="street-address" required />
 
-            <label for="city">City:</label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              autocomplete="address-level2"
-              required
-            />
+          <label for="city">City:</label>
+          <input type="text" id="city" name="city" autocomplete="address-level2" required />
 
-            <label for="state">State:</label>
-            <input
-              type="text"
-              id="state"
-              name="state"
-              autocomplete="address-level1"
-              required
-            />
+          <label for="state">State:</label>
+          <input type="text" id="state" name="state" autocomplete="address-level1" required />
 
-            <label for="zip">Zip Code:</label>
-            <input
-              type="text"
-              id="zip"
-              name="zip"
-              autocomplete="postal-code"
-              required
-            />
-          </fieldset>
+          <label for="zip">Zip Code:</label>
+          <input type="text" id="zip" name="zip" autocomplete="postal-code" required />
+        </fieldset>
 
-          <!-- PAYMENT INFORMATION-->
-          <fieldset>
-            <legend>Payment Information</legend>
+        <!-- PAYMENT INFORMATION-->
+        <fieldset>
+          <legend>Payment Information</legend>
 
-            <label for="cardNumber">Credit Card Number:</label>
-            <input
-              type="text"
-              id="cardNumber"
-              name="cardNumber"
-              autocomplete="cc-number"
-              required
-            />
+          <label for="cardNumber">Credit Card Number:</label>
+          <input type="text" id="cardNumber" name="cardNumber" autocomplete="cc-number" required />
 
-            <label for="expiration">Expiration Date:</label>
-            <input
-              type="text"
-              id="expiration"
-              name="expiration"
-              placeholder="MM/YY"
-              autocomplete="cc-exp"
-              required
-            />
+          <label for="expiration">Expiration Date:</label>
+          <input type="text" id="expiration" name="expiration" placeholder="MM/YY" autocomplete="cc-exp" required />
 
-            <label for="code">Security Code:</label>
-            <input
-              type="text"
-              id="code"
-              name="code"
-              inputmode="numeric"
-              autocomplete="cc-csc"
-              required
-            />
-          </fieldset>
+          <label for="code">Security Code:</label>
+          <input type="text" id="code" name="code" inputmode="numeric" autocomplete="cc-csc" required />
+        </fieldset>
 
-          <!-- ORDER SUMMARY-->
+        <!-- ORDER SUMMARY-->
 
-          <section id="order-summary">
-            <h2>Order Summary</h2>
+        <section id="order-summary">
+          <h2>Order Summary</h2>
 
-            <p>
-              Subtotal:
-              <span id="subtotal">$0.00</span>
-            </p>
+          <p>
+            Subtotal:
+            <span id="subtotal">$0.00</span>
+          </p>
 
-            <p>
-              Tax:
-              <span id="tax">$0.00</span>
-            </p>
+          <p>
+            Tax:
+            <span id="tax">$0.00</span>
+          </p>
 
-            <p>
-              Shipping Estimate:
-              <span id="shipping">$0.00</span>
-            </p>
+          <p>
+            Shipping Estimate:
+            <span id="shipping">$0.00</span>
+          </p>
 
-            <p>
-              Order Total:
-              <span id="orderTotal">$0.00</span>
-            </p>
-          </section>
+          <p>
+            Order Total:
+            <span id="orderTotal">$0.00</span>
+          </p>
+        </section>
 
-          <!-- Checkout button-->
+        <!-- Checkout button-->
 
-          <button id="checkoutSubmit" type="submit">Checkout</button>
-        </form>
-      </section>
-    </main>
+        <button id="checkoutSubmit" type="submit">Checkout</button>
+      </form>
+    </section>
+  </main>
 
-    <footer id="dfooter"></footer>
-  </body>
+  <footer id="dfooter"></footer>
+</body>
+
 </html>

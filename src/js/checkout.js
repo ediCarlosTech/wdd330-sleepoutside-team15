@@ -1,8 +1,11 @@
-import { loadheaderfooter } from "./utils.mjs";
+import { loadheaderfooter, breadcrumb } from "./utils.mjs";
 import CheckoutProcess from "./CheckoutProcess.mjs";
 
 // Load header and footer
 loadheaderfooter();
+
+// add the breadcrumb below the header
+breadcrumb();
 
 // Initialize checkout
 const checkout = new CheckoutProcess("so-cart", "#order-summary");

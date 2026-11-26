@@ -2,7 +2,8 @@ import {
   getLocalStorage,
   setLocalStorage,
   loadheaderfooter,
-  imageHandler
+  imageHandler,
+  breadcrumb
 } from "./utils.mjs";
 
 import { addToCart } from "./cartUtils.mjs";
@@ -13,6 +14,8 @@ loadheaderfooter();
 // Get the wishlist from localStorage
 const wishlist = getLocalStorage("so-wishlist") || [];
 
+// add the breadcrumb below the header
+breadcrumb(wishlist.length);
 // Find the HTML element where products will be displayed
 const wishlistElement = document.querySelector("#wishlist-items");
 

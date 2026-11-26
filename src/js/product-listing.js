@@ -1,4 +1,4 @@
-import { loadheaderfooter, getParam } from "./utils.mjs";
+import { loadheaderfooter, getParam, breadcrumb } from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
 import ProductList from "./ProductList.mjs";
 import QuickView from "./QuickView.mjs";
@@ -55,4 +55,12 @@ const sortMenu = document.querySelector("#sort-products");
 
 sortMenu.addEventListener("change", (event) => {
   productList.sortProducts(event.target.value);
+});
+
+// const itemCount = document.querySelectorAll(".product-card").length;
+
+// add the breadcrumb below the header
+productList.init().then(() => {
+  const itemCount = listElement.querySelectorAll(".product-card").length;
+  breadcrumb(itemCount);
 });
