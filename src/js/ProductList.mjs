@@ -23,7 +23,7 @@ function productCardTemplate(product) {
   // the link starts with "/" so it works from any page that lists products.
   // <!-- <img src="${product.Images.PrimaryMedium}" alt="Image of ${product.NameWithoutBrand}" /> -->      
   return `<li class="product-card">
-    <a href="/product_pages/?product=${product.Id}">
+    <a href="/product_pages/?product=${product.Id}&category=${product.Category}">
       ${discountBadge}
       ${imageHandler(product)}
       <h3 class="card__brand">${product.Brand.Name}</h3>

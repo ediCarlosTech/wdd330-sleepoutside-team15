@@ -19,7 +19,7 @@ export default class ExternalServices {
     const response = await fetch(`${baseURL}products/search/${category}`);
     const data = await convertToJson(response);
     // the API puts the list of products in "Result"
-    console.log(data.Result)
+    // console.log(data.Result)
     return data.Result;
   }
 
