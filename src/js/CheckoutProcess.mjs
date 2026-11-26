@@ -1,4 +1,4 @@
-import { getLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, alertMessage,removeAllAlerts } from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
 
 const taxRate = 0.06
@@ -141,7 +141,22 @@ export default class CheckoutProcess {
     // Add products to the order
     order.items = packageItems(this.list);
 
-    // Send order to the server
-    return await this.services.checkout(order);
+
+    try {
+      // Send order to the server
+      await this.services.checkout(order);
+      setLocalStorage(this.key, []);
+      window.location.assign("/checkout/success.html");
+
+    } catch (err) {
+
+      removeAllAlerts();
+      const messages = error.message && typeof error.message === "object"
+        ? Object.values(error.message)
+        : [error.message || "Unable to place your order."];
+      
+      messages.forEach((message) => alertMessage(message));
+
+    }
   }
 }
