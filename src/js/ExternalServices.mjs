@@ -2,21 +2,21 @@
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
 async function convertToJson(res) {
-  jsonResponse = await res.json()
+  const jsonResponse = await res.json()
 
   if (res.ok) {
     return jsonResponse;
-  
+
   } else {
-    throw {name: "serviceError", message: jsonResponse};
-  
+    throw { name: "serviceError", message: jsonResponse };
+
   }
 }
 
 export default class ExternalServices {
   // category is passed in to getData()
   // so the same data source can be used for any category
-  constructor() {}
+  constructor() { }
 
   // get all products in a category
   async getData(category) {
@@ -50,10 +50,14 @@ export default class ExternalServices {
       },
       body: JSON.stringify(order)
     };
-
+    console.log(options)
     const response = await fetch(url, options);
+    const data = await response.json();
 
-    return await response.json();
+    if (!response.ok) {
+      throw {message: data.message || data};
+    }
+
+    return data;
   }
-
 }

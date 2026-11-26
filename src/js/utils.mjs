@@ -222,6 +222,28 @@ function breadcrumb(itemCount = 0) {
   breaDisplay.innerHTML = `<p>Home > ${result}</p>`
 }
 
+function alertMessage(message, scroll = true) {
+  const alert = document.createElement("div");
+  alert.className = "alert";
+
+  const text = document.createElement("p");
+  text.textContent = message;
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "X";
+  close.setAttribute("aria-label", "Dismiss message");
+  close.addEventListener("click", () => alert.remove());
+  alert.append(text, close);
+
+  const main = qs("main");
+  main.prepend(alert);
+  if (scroll) window.scrollTo(0, 0);
+}
+
+function removeAllAlerts() {
+  document.querySelectorAll(".alert").forEach((alert) => alert.remove());
+}
+
 // add new utility functions to this list so other modules can import them
 export {
   qs,
@@ -236,5 +258,7 @@ export {
   renderWithTemplate,
   loadheaderfooter,
   imageHandler,
-  breadcrumb
+  breadcrumb,
+  alertMessage,
+  removeAllAlerts
 };

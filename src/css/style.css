@@ -118,6 +118,31 @@ p {
   margin-top: -1.7em;
 }
 
+.alert {
+  position: relative;
+  left:35%;
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  align-items: center;
+  margin: 5px 0 ;
+  background-color: var(--primary-color);
+}
+
+.alert p {
+  padding: 0.75em 0.5em;
+}
+
+.alert button {
+  padding-right: 10px;
+  background-color: transparent;
+  border: 0;
+  color: var(--dark-grey);
+  font-size: var(--small-font);
+  font-weight: bold;
+  cursor: pointer;
+}
+
 /* utility classes */
 .highlight {
   color: var(--tertiary-color);
